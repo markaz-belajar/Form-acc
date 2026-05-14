@@ -43,14 +43,15 @@
     100%{opacity:1;transform:translateX(-50%) scale(1) rotate(0deg);}
   }
 
-  /* ====== MASKOT — lebih ke kanan & lebih besar ====== */
+  /* ====== MASKOT — tengah sedikit ke kanan, balon terlihat ====== */
   #mascot-wrap{
     position:absolute;
     bottom:-2%;
-    /* Geser ke kanan: dari left:62% jadi left:55%, dan width lebih besar */
-    left:55%;
-    width:82%;
-    max-width:340px;
+    /* Tengah layar, tapi geser sedikit ke kanan agar balon tetap terlihat */
+    left:50%;
+    transform:translateX(-35%);
+    width:75%;
+    max-width:310px;
     z-index:8;
     will-change:transform;
   }
@@ -62,41 +63,42 @@
   }
   #mascot-wrap img.visible{ opacity:1; }
 
-  /* ====== SWIPE CTA ====== */
+  /* ====== SWIPE CTA — rounded, kecil, transparan ====== */
   #swipe-cta{
     position:absolute;bottom:38px;left:50%;
     transform:translateX(-50%);
     z-index:20;opacity:0;
-    display:flex;flex-direction:column;align-items:center;gap:5px;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
     animation:ctaIn 0.9s ease 2.6s forwards;
     cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
-    will-change:transform;
+    will-change:transform,opacity;
   }
   @keyframes ctaIn{
     0%  {opacity:0;transform:translateX(-50%) translateY(20px);}
-    100%{opacity:1;transform:translateX(-50%) translateY(0);}
+    100%{opacity:0.65;transform:translateX(-50%) translateY(0);}
   }
   .arrows{
     display:flex;flex-direction:column;align-items:center;gap:1px;
   }
-  .arr{display:block;width:38px;height:19px;overflow:visible;}
+  .arr{display:block;width:32px;height:16px;overflow:visible;}
   .arr svg{overflow:visible;}
-  .arr svg polyline{stroke:white;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
-  .arr:nth-child(1){opacity:0.28;}
-  .arr:nth-child(2){opacity:0.60;}
-  .arr:nth-child(3){opacity:1.00;}
+  .arr svg polyline{stroke:white;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  .arr:nth-child(1){opacity:0.25;}
+  .arr:nth-child(2){opacity:0.55;}
+  .arr:nth-child(3){opacity:0.90;}
   .arr:nth-child(3) svg{
-    filter:drop-shadow(0 0 5px rgba(255,255,255,0.9)) drop-shadow(0 0 10px rgba(130,230,255,0.7));
+    filter:drop-shadow(0 0 4px rgba(255,255,255,0.8)) drop-shadow(0 0 8px rgba(130,230,255,0.6));
   }
   .swipe-label{
-    font-size:15px;font-weight:800;letter-spacing:2.5px;
-    text-transform:uppercase;color:#fff;margin-top:3px;
-    text-shadow:0 0 12px rgba(255,255,255,0.9),0 0 28px rgba(100,210,255,0.7),0 2px 6px rgba(0,0,0,0.25);
-    animation:labelPulse 2.2s ease-in-out 3.0s infinite;
+    font-family:'Nunito', 'Varela Round', 'Comic Neue', system-ui, sans-serif;
+    font-size:11px;font-weight:700;letter-spacing:1.8px;
+    text-transform:uppercase;color:rgba(255,255,255,0.82);margin-top:2px;
+    text-shadow:0 0 10px rgba(255,255,255,0.6),0 1px 4px rgba(0,0,0,0.18);
+    animation:labelPulse 2.4s ease-in-out 3.0s infinite;
   }
   @keyframes labelPulse{
-    0%,100%{opacity:0.85;}
-    50%    {opacity:1;text-shadow:0 0 20px rgba(255,255,255,1),0 0 48px rgba(100,210,255,1),0 2px 6px rgba(0,0,0,0.25);}
+    0%,100%{opacity:0.65;}
+    50%    {opacity:0.95;}
   }
 
   /* ====== SPARKLES ====== */
@@ -113,6 +115,8 @@
     100%{opacity:0;transform:scale(1.06);}
   }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="scene">
@@ -140,26 +144,18 @@
   <!-- Swipe CTA -->
   <div id="swipe-cta">
     <div class="arrows">
-      <div class="arr"><svg viewBox="0 0 38 19"><polyline points="4,15 19,4 34,15"/></svg></div>
-      <div class="arr"><svg viewBox="0 0 38 19"><polyline points="4,15 19,4 34,15"/></svg></div>
-      <div class="arr"><svg viewBox="0 0 38 19"><polyline points="4,15 19,4 34,15"/></svg></div>
+      <div class="arr"><svg viewBox="0 0 32 16"><polyline points="3,13 16,3 29,13"/></svg></div>
+      <div class="arr"><svg viewBox="0 0 32 16"><polyline points="3,13 16,3 29,13"/></svg></div>
+      <div class="arr"><svg viewBox="0 0 32 16"><polyline points="3,13 16,3 29,13"/></svg></div>
     </div>
-    <div class="swipe-label">Swipe up !</div>
+    <div class="swipe-label">Swipe Up</div>
   </div>
 
 </div>
 <script>
 // ============================================================
-// BG CANVAS — Seamless scrolling, TANPA garis sambungan
-// Teknik: load 4 gambar, gambar ke background canvas 2× lebar
-// (frame 1-4 + frame 1-4 lagi), scroll ke kiri, reset saat
-// sudah geser 1 siklus penuh → tidak ada glitch/seam terlihat.
-//
-// Kunci anti-seam: drawImage langsung di canvas (tidak pakai
-// CSS background-image), overlap sedikit di boundary (1px),
-// dan canvas di-resize agar pixel-perfect.
+// BG CANVAS — Seamless scrolling
 // ============================================================
-
 const canvas = document.getElementById('bg-canvas');
 const ctx    = canvas.getContext('2d');
 
@@ -174,7 +170,6 @@ let frames   = [];
 let loaded   = 0;
 let bgReady  = false;
 
-// Resize canvas to device pixel ratio for sharp render
 function resizeCanvas() {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -182,19 +177,15 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Load semua frame
 FRAME_URLS.forEach((url, i) => {
   const img = new Image();
   img.crossOrigin = 'anonymous';
   img.onload = () => {
     frames[i] = img;
     loaded++;
-    if (loaded === FRAME_URLS.length) {
-      bgReady = true;
-    }
+    if (loaded === FRAME_URLS.length) bgReady = true;
   };
   img.onerror = () => {
-    // Jika gagal load, buat frame warna solid sebagai fallback
     loaded++;
     frames[i] = null;
     if (loaded === FRAME_URLS.length) bgReady = true;
@@ -202,66 +193,44 @@ FRAME_URLS.forEach((url, i) => {
   img.src = url;
 });
 
-// Scroll state
 let bgOffset  = 0;
-const BG_SPEED = 0.35; // px per frame — sedikit lebih cepat agar terasa
+const BG_SPEED = 0.35;
 
 function drawBg() {
   const W = canvas.width;
   const H = canvas.height;
-  const N = frames.length; // 4
+  const N = frames.length;
 
   if (!bgReady) {
-    // Fallback: fill biru langit sementara gambar loading
     ctx.fillStyle = '#6ec6f5';
     ctx.fillRect(0, 0, W, H);
     return;
   }
 
-  // Tiap frame ditampilkan selebar layar (W), tinggi H
-  // Kita punya N frame = total strip W*N lebar
-  // Kita loop: bgOffset dari 0 sampai W*N, lalu reset ke 0
-
   const totalWidth = W * N;
-
-  // Gambar frame 1..N di posisi bgOffset s.d. bgOffset + totalWidth
-  // Juga gambar satu set lagi (untuk seamless wrap)
   for (let rep = 0; rep < 2; rep++) {
     for (let i = 0; i < N; i++) {
       const img = frames[i];
       const x   = rep * totalWidth + i * W - bgOffset;
-
-      // Hanya gambar yang terlihat di layar (optimasi)
       if (x + W < 0 || x > W) continue;
-
       if (img) {
-        // drawImage dengan cover: scale ke H, crop horizontal tengah
-        const scale     = H / img.naturalHeight;
-        const srcW      = img.naturalWidth;
-        const dstW      = srcW * scale; // lebar setelah scale ke H
-
+        const scale = H / img.naturalHeight;
+        const srcW  = img.naturalWidth;
+        const dstW  = srcW * scale;
         if (dstW >= W) {
-          // Gambar lebih lebar dari slot → crop tengah
-          const cropX  = (srcW - W / scale) / 2;
-          ctx.drawImage(img,
-            cropX, 0, W / scale, img.naturalHeight, // src
-            x,     0, W,         H                  // dst
-          );
+          const cropX = (srcW - W / scale) / 2;
+          ctx.drawImage(img, cropX, 0, W / scale, img.naturalHeight, x, 0, W, H);
         } else {
-          // Gambar lebih sempit → stretch
           ctx.drawImage(img, x, 0, W, H);
         }
       } else {
-        // Fallback per-frame kalau gagal load
         ctx.fillStyle = '#5ab8f0';
         ctx.fillRect(x, 0, W, H);
       }
     }
   }
-
-  // Geser offset
   bgOffset += BG_SPEED;
-  if (bgOffset >= totalWidth) bgOffset = 0; // seamless reset
+  if (bgOffset >= totalWidth) bgOffset = 0;
 }
 
 // ============================================================
@@ -276,10 +245,13 @@ window.addEventListener('pageshow', function(e) {
     scene.style.transform = 'scale(1)';
     isDragging = false;
     dragDeltaY = 0;
-    cta.style.transition      = 'none';
-    cta.style.transform       = 'translateX(-50%) translateY(0)';
+    triggered  = false;
+    cta.style.transition  = 'none';
+    cta.style.transform   = 'translateX(-50%) translateY(0)';
+    cta.style.opacity     = '0.65';
     classText.style.opacity   = '1';
     classText.style.transform = 'translateX(-50%) scale(1) rotate(0deg)';
+    mascotWrap.style.opacity  = '1';
   }
 });
 
@@ -295,6 +267,7 @@ let mascotReady   = false;
 let isDragging    = false;
 let dragStartY    = 0;
 let dragDeltaY    = 0;
+let triggered     = false;  // pastikan goToForm hanya dipanggil sekali
 
 let floatPhase    = 0;
 let floatActive   = true;
@@ -306,12 +279,15 @@ let rafId = null;
 // ============================================================
 // RISE MASKOT
 // ============================================================
-mascotWrap.style.transform = 'translateY(115%)';
+// Base translateX offset untuk posisi maskot (tengah+sedikit kanan)
+const MASCOT_BASE_X = '-35%';
+
+mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(115%)`;
 
 setTimeout(() => {
   mascotImg.classList.add('visible');
   mascotWrap.style.transition = 'transform 2.6s cubic-bezier(0.20,0.85,0.36,1)';
-  mascotWrap.style.transform  = 'translateY(0px)';
+  mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(0px)`;
 
   setTimeout(() => {
     mascotWrap.style.transition = 'none';
@@ -330,36 +306,27 @@ setTimeout(() => { classTextReady = true; }, 2200);
 function startMainLoop() {
   if (rafId) return;
   function loop() {
-    // BG selalu digambar
     drawBg();
-
     floatPhase      += FLOAT_SPEED;
     classFloatPhase += FLOAT_SPEED * 0.85;
 
     const floatY = Math.sin(floatPhase) * FLOAT_AMP;
 
-    if (!isDragging) {
-      mascotWrap.style.transform = `translateY(${floatY}px)`;
+    if (!isDragging && !triggered) {
+      mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${floatY}px)`;
     }
 
-    if (classTextReady && !isDragging) {
+    if (classTextReady && !isDragging && !triggered) {
       const ctY = Math.sin(classFloatPhase) * 10;
       classText.style.transform = `translateX(-50%) translateY(${ctY}px) scale(1) rotate(0deg)`;
     }
 
     rafId = requestAnimationFrame(loop);
   }
-
-  // Gambar BG segera walau mascot belum ready
-  function bgOnlyLoop() {
-    drawBg();
-    if (!mascotReady) requestAnimationFrame(bgOnlyLoop);
-  }
-
   rafId = requestAnimationFrame(loop);
 }
 
-// Mulai BG loop segera (sebelum mascot ready)
+// Mulai BG loop segera
 (function bgEarlyLoop() {
   drawBg();
   if (!bgReady || !mascotReady) requestAnimationFrame(bgEarlyLoop);
@@ -368,29 +335,40 @@ function startMainLoop() {
 // ============================================================
 // DRAG INTERACTION
 // ============================================================
-const MAX_DRAG = 260;
-const TRIGGER  = 140;
+const MAX_DRAG = 320;
+const TRIGGER  = 130;
 
 function onStart(y) {
-  if (!mascotReady) return;
+  if (!mascotReady || triggered) return;
   isDragging  = true;
   dragStartY  = y;
   dragDeltaY  = 0;
 }
 
 function onMove(y) {
-  if (!isDragging) return;
+  if (!isDragging || triggered) return;
   const raw = dragStartY - y;
   dragDeltaY = Math.max(0, Math.min(raw, MAX_DRAG));
 
   const floatY = Math.sin(floatPhase) * FLOAT_AMP;
-  mascotWrap.style.transform = `translateY(${floatY - dragDeltaY}px)`;
-  cta.style.transform        = `translateX(-50%) translateY(${-dragDeltaY}px)`;
 
+  // Maskot naik terus
+  mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${floatY - dragDeltaY}px)`;
+
+  // CTA naik & fade out bersamaan dengan maskot
+  const ctaProgress = Math.min(dragDeltaY / (TRIGGER * 0.7), 1);
+  cta.style.transform = `translateX(-50%) translateY(${-dragDeltaY * 0.8}px)`;
+  cta.style.opacity   = String(0.65 * (1 - ctaProgress));
+
+  // class text fade out
   const progress = Math.min(dragDeltaY / (TRIGGER * 0.85), 1);
   classText.style.transition = 'none';
   classText.style.opacity    = String(1 - progress);
   classText.style.transform  = `translateX(-50%) scale(${1 - progress * 0.08}) rotate(0deg)`;
+
+  // Fade maskot sedikit juga saat mendekati trigger
+  const mascotFade = Math.max(0, 1 - (dragDeltaY - TRIGGER * 0.5) / (TRIGGER * 0.6));
+  mascotWrap.style.opacity = String(Math.min(1, mascotFade + 0.0));
 
   if (dragDeltaY >= TRIGGER) goToForm();
 }
@@ -398,10 +376,13 @@ function onMove(y) {
 function onEnd(_y) {
   if (!isDragging) return;
   isDragging = false;
-  if (dragDeltaY >= TRIGGER) { goToForm(); return; }
+  if (triggered || dragDeltaY >= TRIGGER) { goToForm(); return; }
 
-  cta.style.transition = 'transform 0.45s cubic-bezier(0.34,1.3,0.64,1)';
+  // Kembali ke posisi awal
+  cta.style.transition = 'transform 0.45s cubic-bezier(0.34,1.3,0.64,1), opacity 0.45s ease';
   cta.style.transform  = 'translateX(-50%) translateY(0)';
+  cta.style.opacity    = '0.65';
+  mascotWrap.style.opacity = '1';
 
   const snapFrom = dragDeltaY;
   const snapDur  = 450;
@@ -412,7 +393,7 @@ function onEnd(_y) {
     const ease      = 1 - Math.pow(1 - t, 3);
     const remaining = snapFrom * (1 - ease);
     const floatY    = Math.sin(floatPhase) * FLOAT_AMP;
-    mascotWrap.style.transform = `translateY(${floatY - remaining}px)`;
+    mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${floatY - remaining}px)`;
     if (t < 1) requestAnimationFrame(snapMascot);
   }
   requestAnimationFrame(snapMascot);
@@ -445,13 +426,31 @@ document.addEventListener('mousemove',  e => { if (isDragging) onMove(e.clientY)
 document.addEventListener('mouseup',    e => onEnd(e.clientY));
 
 // Click CTA
-cta.addEventListener('click', () => { if (dragDeltaY < 10) goToForm(); });
+cta.addEventListener('click', () => { if (dragDeltaY < 10 && !triggered) goToForm(); });
 
 function goToForm() {
+  if (triggered) return;
+  triggered  = true;
   isDragging = false;
-  const scene = document.getElementById('scene');
-  scene.classList.add('exit');
-  setTimeout(() => { window.location.href = 'index.html'; }, 460);
+
+  // Animasi naik terus + fade out maskot & cta sebelum exit scene
+  const floatY = Math.sin(floatPhase) * FLOAT_AMP;
+  mascotWrap.style.transition = 'transform 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease';
+  mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(${floatY - 420}px)`;
+  mascotWrap.style.opacity    = '0';
+
+  cta.style.transition = 'transform 0.4s ease, opacity 0.35s ease';
+  cta.style.transform  = `translateX(-50%) translateY(-120px)`;
+  cta.style.opacity    = '0';
+
+  classText.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+  classText.style.opacity    = '0';
+
+  setTimeout(() => {
+    const scene = document.getElementById('scene');
+    scene.classList.add('exit');
+    setTimeout(() => { window.location.href = 'index.html'; }, 460);
+  }, 380);
 }
 </script>
 </body>
