@@ -1656,14 +1656,32 @@ async function submitAfterAgree() {
   data.append('entry.1477599069', document.getElementById('namaLengkap').value.trim());
   data.append('entry.1337713150', radioValues['jk'] || '');
   data.append('entry.1404121608', document.getElementById('tempatLahir').value);
-  data.append('entry.37152362', document.getElementById('tglLahir').value);
+
+  // Tanggal lahir peserta — dipecah jadi year/month/day
+  const tglLahirVal = document.getElementById('tglLahir').value;
+  if (tglLahirVal) {
+    const [tglY, tglM, tglD] = tglLahirVal.split('-');
+    data.append('entry.37152362_year', tglY);
+    data.append('entry.37152362_month', parseInt(tglM, 10).toString());
+    data.append('entry.37152362_day', parseInt(tglD, 10).toString());
+  }
+
   data.append('entry.742263447', document.getElementById('anakKe').value);
   data.append('entry.1101393286', document.getElementById('jmlSaudara').value);
   data.append('entry.812047721', getSekolahValue());
   data.append('entry.1059499898', document.getElementById('kelas').value);
   data.append('entry.168964460', document.getElementById('alamat').value.trim());
   data.append('entry.1455222930', document.getElementById('namaIbu').value.trim());
-  data.append('entry.829374909', document.getElementById('tglLahirWali').value);
+
+  // Tanggal lahir wali/ibu — dipecah jadi year/month/day
+  const tglIbuVal = document.getElementById('tglLahirWali').value;
+  if (tglIbuVal) {
+    const [tglIbuY, tglIbuM, tglIbuD] = tglIbuVal.split('-');
+    data.append('entry.829374909_year', tglIbuY);
+    data.append('entry.829374909_month', parseInt(tglIbuM, 10).toString());
+    data.append('entry.829374909_day', parseInt(tglIbuD, 10).toString());
+  }
+
   data.append('entry.102773795', document.getElementById('tempatLahirWali').value);
   data.append('entry.1451498221', getPkjIbuValue());
   data.append('entry.1241854734', document.getElementById('waIbu').value.trim());
@@ -1676,6 +1694,7 @@ async function submitAfterAgree() {
   data.append('entry.229646615', document.getElementById('tiktok').value.trim());
   data.append('entry.1636139426', radioValues['program'] || '');
   data.append('entry.13159185', radioValues['jenis'] || '');
+  data.append('entry.1366681306', 'Saya Setuju');
 
   try {
     await fetch(URL, {method:'POST', body:data, mode:'no-cors'});
