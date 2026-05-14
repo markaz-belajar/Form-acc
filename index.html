@@ -1770,6 +1770,36 @@ style.textContent = `
   #splashScreen { opacity:0; transition:opacity 0.3s; }
 `;
 document.head.appendChild(style);
+ // ── LANJUTKAN MUSIK DARI INTRO ──────────────────────────────
+(function() {
+  const MUSIC_URL  = 'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/intro.music.mp3';
+  const savedTime  = parseFloat(sessionStorage.getItem('mb_music_time') || '0');
+  const wasPlaying = sessionStorage.getItem('mb_music_playing') === '1';
+  if (!wasPlaying) return;
+
+  const audio = new Audio(MUSIC_URL);
+  audio.loop   = true;
+  audio.volume = 0;
+  if (savedTime > 0) audio.currentTime = savedTime;
+
+  audio.addEventListener('timeupdate', () => {
+    sessionStorage.setItem('mb_music_time', String(audio.currentTime));
+  });
+
+  function play() {
+    audio.play().then(() => {
+      let vol = 0;
+      const fi = setInterval(() => {
+        vol = Math.min(vol + 0.04, 0.8);
+        audio.volume = vol;
+        if (vol >= 0.8) clearInterval(fi);
+      }, 80);
+    }).catch(() => {});
+  }
+
+  play();
+  document.addEventListener('touchstart', play, { once: true, passive: true });
+})();
 </script>
 </body>
 </html>
