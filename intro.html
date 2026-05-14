@@ -9,25 +9,13 @@
   html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background:#6ec6f5;}
   #scene{position:fixed;inset:0;overflow:hidden;}
 
-  /* ====== BG STRIP — HANYA dikontrol JS (CSS animation dihapus total) ====== */
-  /* Fix #1: hapus CSS @keyframes bgSlide agar tidak bentrok dengan JS tickBg */
-  #bg-strip{
-    position:absolute;
-    top:0;left:0;
-    width:400%;
-    height:100%;
-    display:flex;
-    z-index:1;
-    will-change:transform;
-    /* TIDAK ada animation CSS di sini — semua dihandle JS */
+  /* ====== BG — canvas, zero gap ====== */
+  #bg-canvas{
+    position:absolute;top:0;left:0;
+    width:100%;height:100%;
+    z-index:1;display:block;
   }
-  #bg-strip img{
-    width:25%;
-    height:100%;
-    object-fit:cover;
-    object-position:center top;
-    flex-shrink:0;
-  }
+  #bg-strip{display:none;}
 
   /* ====== LOGO ====== */
   #logo{
@@ -55,13 +43,12 @@
     100%{opacity:1;transform:translateX(-50%) scale(1) rotate(0deg);}
   }
 
-  /* ====== MASKOT — medium size, geser kanan agar balon tidak terpotong ====== */
+  /* ====== MASKOT — sedikit lebih kecil, lebih ke kanan ====== */
   #mascot-wrap{
     position:absolute;
     bottom:-2%;
-    /* Geser origin ke kanan: left 58% agar maskot sedikit miring ke kanan */
-    left:58%;
-    width:78%;max-width:340px;
+    left:62%;
+    width:68%;max-width:300px;
     z-index:8;
     will-change:transform;
   }
@@ -73,19 +60,7 @@
   }
   #mascot-wrap img.visible{ opacity:1; }
 
-  /* ====== BOTTOM GRADIENT — tidak bergerak, hanya fade opacity ====== */
-  #pull-gradient{
-    position:absolute;bottom:0;left:0;right:0;
-    height:420px;
-    background:linear-gradient(to top,
-      rgba(10,30,80,0.68) 0%,
-      rgba(10,30,80,0.38) 28%,
-      rgba(10,30,80,0.15) 55%,
-      rgba(10,30,80,0.04) 75%,
-      transparent 100%);
-    z-index:18;pointer-events:none;
-    /* Tidak ada will-change transform — gradient DIAM, tidak pernah di-translate */
-  }
+  /* gradient dihapus total */
 
   /* ====== SWIPE CTA ====== */
   #swipe-cta{
