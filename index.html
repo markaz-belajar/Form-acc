@@ -2,1755 +2,329 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pendaftaran Angkatan Belajar 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Markaz Belajar — Class of 2026</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
   :root{
-    --gold:#F3D465;
-    --gold-dark:#C9A827;
-    --gold-deeper:#8A6F0E;
-    --white:#FFFFFF;
-    --text:#1A1A1A;
-    --text-soft:#5A5A5A;
-    --text-hint:#9A9A9A;
-    --card-shadow:0 8px 32px rgba(0,0,0,0.08);
-    --card-shadow-hover:0 16px 48px rgba(0,0,0,0.14);
-    --radius:16px;
-    --radius-sm:10px;
-    --input-border:#E0E0E0;
-    --input-focus:#C9A827;
+    --sky1:#6ec6f5;
+    --sky2:#b8e4ff;
+    --sky3:#dff3ff;
   }
-  body{
-    background:#F3D465;
-    font-family:'Plus Jakarta Sans',sans-serif;
-    min-height:100vh;
-    padding:0 0 100px;
-    max-width:480px;
-    margin:0 auto;
-    font-size:16px;
-    -webkit-text-size-adjust:100%;
-  }
-  /* ===== HERO 4-LAYER ===== */
-  .hero{
-    position:relative;
-    width:100%;
-    height:334px;
+
+  html,body{
+    width:100%;height:100%;
     overflow:hidden;
-    background:#87CEEB;
-    flex-shrink:0;
+    touch-action:pan-y;
+    font-family:'Segoe UI',sans-serif;
   }
-  /* Layer 1 — Background awan & balon (static) */
-  .hero-bg{
+
+  /* ===== SCENE ===== */
+  #scene{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(180deg, #5bbde8 0%, #9dd9f7 40%, #c8ecff 75%, #e8f7ff 100%);
+    overflow:hidden;
+  }
+
+  /* ===== LAYER 1: PARALLAX CLOUDS BG ===== */
+  #clouds-layer{
+    position:absolute;
+    inset:0;
+    width:200%;          /* double wide untuk scroll */
+    height:100%;
+    z-index:1;
+    animation: cloudDrift 18s linear infinite;
+    will-change: transform;
+  }
+  #clouds-layer img{
     position:absolute;
     inset:0;
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:center top;
-    z-index:1;
+    object-position:center;
   }
-  /* Layer 4 — Logo Markaz Belajar (tengah atas, static) */
-  .hero-logo{
+  @keyframes cloudDrift{
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ===== LAYER 2: LOGO ===== */
+  #logo{
     position:absolute;
-    top:18px;
+    top:52px;
     left:50%;
     transform:translateX(-50%);
     width:140px;
-    object-fit:contain;
-    z-index:4;
-    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.18));
-  }
-  /* Layer 2 — Text "Class of 2026" (animasi float lambat) */
-  .hero-text{
-    position:absolute;
-    bottom:90px;
-    left:12px;
-    width:58%;
-    object-fit:contain;
-    z-index:2;
-    filter:drop-shadow(0 4px 12px rgba(0,0,0,0.22));
-    animation: floatText 4s ease-in-out infinite;
-    transform-origin: center bottom;
-  }
-  /* Layer 3 — Maskot Soma (animasi float berbeda phase) */
-  .hero-mascot{
-    position:absolute;
-    bottom:40px;
-    right:-8px;
-    width:52%;
-    object-fit:contain;
-    z-index:3;
-    filter:drop-shadow(0 6px 18px rgba(0,0,0,0.20));
-    animation: floatMascot 3.6s ease-in-out infinite;
-    transform-origin: center bottom;
-  }
-  /* Animasi naik turun pelan — beda phase biar natural */
-  @keyframes floatText {
-    0%   { transform: translateY(0px) rotate(0deg); }
-    50%  { transform: translateY(-9px) rotate(0.4deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
-  }
-  @keyframes floatMascot {
-    0%   { transform: translateY(0px) rotate(0deg); }
-    40%  { transform: translateY(-11px) rotate(-0.5deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
-  }
-  /* No bottom fade */
-
-  /* ===== CARD STACK LAYER SYSTEM ===== */
-  .card{
-    background:var(--white);
-    border-radius:28px;
-    padding:28px 24px;
-    margin:0 8px 12px;
-    box-shadow:
-      0 2px 8px rgba(72,169,224,0.10),
-      0 8px 24px rgba(0,0,0,0.07),
-      0 16px 40px rgba(0,0,0,0.05);
-    border: 2px solid rgba(72,169,224,0.55);
-    position:relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  /* Layer demi layer — tiap card sedikit lebih dalam */
-  .card:nth-of-type(1){ z-index:10; }
-  .card:nth-of-type(2){ z-index:9;  margin-top:-4px; }
-  .card:nth-of-type(3){ z-index:8;  margin-top:-4px; }
-  .card:nth-of-type(4){ z-index:7;  margin-top:-4px; }
-  .card:nth-of-type(5){ z-index:6;  margin-top:-4px; }
-  .card:nth-of-type(6){ z-index:5;  margin-top:-4px; }
-  .card:nth-of-type(7){ z-index:4;  margin-top:-4px; }
-  .card:nth-of-type(8){ z-index:3;  margin-top:-4px; }
-  .card:nth-of-type(9){ z-index:2;  margin-top:-4px; }
-
-  /* Card pertama — awalnya tepat di bawah hero, scroll naik overlap */
-  .card:first-of-type{
-    margin-top:0px;
-    position:relative;
     z-index:10;
-    transition: margin-top 0.1s linear;
+    opacity:0;
+    filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));
+    animation: logoIn 0.7s cubic-bezier(0.34,1.4,0.64,1) 0.4s forwards;
   }
-  .form-subtitle{
-    font-size:13px;
-    font-weight:600;
-    color:rgba(0,0,0,0.55);
-    text-align:center;
-    padding:10px 20px 14px;
-    position:relative;
-    z-index:3;
-    letter-spacing:0.2px;
+  @keyframes logoIn{
+    0%  { opacity:0; transform:translateX(-50%) scale(0.7) translateY(-20px); }
+    100%{ opacity:1; transform:translateX(-50%) scale(1) translateY(0); }
   }
-  .section-label{
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    color:var(--gold-deeper);
-    margin-bottom:20px;
-    padding-bottom:10px;
-    border-bottom:1.5px solid #F3D465;
+
+  /* ===== LAYER 3: CLASS OF 2026 TEXT ===== */
+  #class-text{
+    position:absolute;
+    top:130px;
+    left:50%;
+    transform:translateX(-50%);
+    width:78%;
+    max-width:300px;
+    z-index:9;
+    opacity:0;
+    filter:drop-shadow(0 6px 20px rgba(0,0,0,0.25));
+    animation:
+      textIn 0.9s cubic-bezier(0.22,1.4,0.36,1) 1.0s forwards,
+      textFloat 4s ease-in-out 2.2s infinite;
   }
-  .field{margin-bottom:20px}
-  .field:last-child{margin-bottom:0}
-  label{
-    display:block;
-    font-size:13px;
-    font-weight:600;
-    color:var(--text);
-    margin-bottom:7px;
+  @keyframes textIn{
+    0%  { opacity:0; transform:translateX(-50%) scale(0.5) rotate(-4deg); }
+    60% { opacity:1; transform:translateX(-50%) scale(1.06) rotate(1deg); }
+    100%{ opacity:1; transform:translateX(-50%) scale(1) rotate(0deg); }
   }
-  label .req{color:#E24B4A;margin-left:2px}
-  input[type=text],input[type=email],input[type=date],textarea,select{
-    width:100%;
-    padding:13px 16px;
-    border:1.5px solid var(--input-border);
-    border-radius:var(--radius-sm);
-    font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:14px;
-    color:var(--text);
-    background:#FAFAFA;
-    outline:none;
-    transition:border-color 0.2s,box-shadow 0.2s;
-    -webkit-appearance:none;
-    appearance:none;
+  @keyframes textFloat{
+    0%,100%{ transform:translateX(-50%) translateY(0px) rotate(0deg); }
+    50%    { transform:translateX(-50%) translateY(-10px) rotate(0.5deg); }
   }
-  input[type=text]:focus,input[type=email]:focus,input[type=date]:focus,textarea:focus,select:focus{
-    border-color:var(--input-focus);
-    box-shadow:0 0 0 3px rgba(201,168,39,0.12);
-    background:#FFFEF8;
+
+  /* ===== LAYER 4: MASKOT SOMA — flies in from bottom ===== */
+  #mascot{
+    position:absolute;
+    bottom:-20px;
+    right:-10px;
+    width:62%;
+    max-width:270px;
+    z-index:8;
+    opacity:0;
+    filter:drop-shadow(0 12px 28px rgba(0,0,0,0.18));
+    animation:
+      mascotFlyIn 1.1s cubic-bezier(0.22,1.3,0.36,1) 0.6s forwards,
+      mascotFloat 3.6s ease-in-out 2.0s infinite;
+    transform-origin: center bottom;
   }
-  textarea{resize:vertical;min-height:80px}
-  select{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%239A9A9A' stroke-width='2' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;
-    background-position:right 14px center;
-    padding-right:40px;
+  @keyframes mascotFlyIn{
+    0%  { opacity:0; transform:translateY(120%) scale(0.8) rotate(6deg); }
+    60% { opacity:1; transform:translateY(-18px) scale(1.04) rotate(-2deg); }
+    80% { transform:translateY(6px) scale(0.98) rotate(0.5deg); }
+    100%{ opacity:1; transform:translateY(0px) scale(1) rotate(0deg); }
   }
-  .radio-group{display:flex;flex-direction:column;gap:10px}
-  /* Pekerjaan 2 kolom */
-  .radio-grid-2{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
+  @keyframes mascotFloat{
+    0%,100%{ transform:translateY(0px) rotate(0deg); }
+    40%    { transform:translateY(-14px) rotate(-1deg); }
   }
-  .radio-grid-2 .radio-option{
-    padding:10px 12px;
-    font-size:13px;
-  }
-  .radio-grid-2 .radio-label{font-size:13px;}
-  .radio-full{grid-column:1/-1;}
-  /* Program kelas deskripsi */
-  .program-desc{
-    font-size:13px;
-    color:var(--text-soft);
-    margin-bottom:10px;
-  }
-  .program-age-note{
+
+  /* ===== SWIPE UP CTA ===== */
+  #swipe-cta{
+    position:absolute;
+    bottom:52px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:20;
+    opacity:0;
     display:flex;
     flex-direction:column;
-    gap:4px;
-    background:#FFFCF0;
-    border:1.5px solid #F3D465;
-    border-radius:var(--radius-sm);
-    padding:10px 14px;
-    margin-bottom:14px;
-    font-size:12.5px;
-    color:var(--text-soft);
-    line-height:1.5;
-  }
-  .program-age-note strong{color:var(--gold-deeper);}
-  /* Separator */
-  .program-separator{
-    display:flex;
     align-items:center;
     gap:10px;
-    margin-bottom:10px;
-  }
-  .program-sep-line{
-    flex:1;
-    height:1.5px;
-    background:linear-gradient(to right,transparent,#E0E0E0);
-  }
-  .program-separator:first-of-type .program-sep-line:last-child,
-  .program-separator .program-sep-line:last-child{
-    background:linear-gradient(to left,transparent,#E0E0E0);
-  }
-  .program-sep-label{
-    font-size:13px;
-    font-weight:700;
-    letter-spacing:1px;
-    color:var(--gold-deeper);
-    white-space:nowrap;
-    background:#FFF9E6;
-    padding:3px 10px;
-    border-radius:99px;
-    border:1px solid #F3D465;
-  }
-  /* Image card grid untuk program & jenis */
-  .img-radio-grid{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:10px;
-  }
-  .img-radio-card{
-    position:relative;
+    animation: ctaIn 0.8s ease 2.2s forwards;
     cursor:pointer;
-    border-radius:var(--radius-sm);
-    overflow:hidden;
-    border:2.5px solid transparent;
-    transition:all 0.2s;
-    background:#F0F0F0;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
   }
-  .img-radio-card input{display:none}
-  .img-radio-card img{
-    width:100%;
-    aspect-ratio:4/3;
-    object-fit:cover;
-    display:block;
+  @keyframes ctaIn{
+    0%  { opacity:0; transform:translateX(-50%) translateY(24px); }
+    100%{ opacity:1; transform:translateX(-50%) translateY(0); }
   }
-  .img-radio-card .img-radio-img-placeholder{
-    width:100%;
-    aspect-ratio:4/3;
-    background:linear-gradient(135deg,#F3D465 0%,#C9A827 100%);
+
+  /* Arrow group — 3 chevrons bouncing */
+  .arrows{
     display:flex;
+    flex-direction:column;
     align-items:center;
-    justify-content:center;
+    gap:2px;
+    animation: arrowBounce 1.4s ease-in-out 2.8s infinite;
   }
-  .img-radio-card .img-radio-img-placeholder svg{
-    opacity:0.35;
+  @keyframes arrowBounce{
+    0%,100%{ transform:translateY(0); }
+    50%    { transform:translateY(-8px); }
   }
-  .img-radio-card .img-radio-label{
-    padding:8px 10px;
+  .arrow-chevron{
+    width:32px;
+    height:16px;
+    opacity:0;
+    animation: chevronFade 1.4s ease-in-out infinite;
+  }
+  .arrow-chevron:nth-child(1){ animation-delay:2.8s; }
+  .arrow-chevron:nth-child(2){ animation-delay:3.0s; }
+  .arrow-chevron:nth-child(3){ animation-delay:3.2s; }
+  @keyframes chevronFade{
+    0%,100%{ opacity:0.2; }
+    50%    { opacity:1; }
+  }
+  .arrow-chevron svg polyline{
+    stroke:white;
+    stroke-width:3;
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    filter:drop-shadow(0 0 6px rgba(255,255,255,0.9));
+  }
+
+  /* Text "Swipe up" */
+  .swipe-label{
     font-size:15px;
-    font-weight:600;
-    color:var(--text);
-    line-height:1.3;
-    background:white;
+    font-weight:800;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:#ffffff;
+    text-shadow:
+      0 0 12px rgba(255,255,255,0.9),
+      0 0 28px rgba(100,210,255,0.7),
+      0 2px 6px rgba(0,0,0,0.25);
+    animation: labelPulse 2s ease-in-out 2.8s infinite;
   }
-  .img-radio-card .img-radio-label span{
-    display:block;
-    font-size:13px;
-    font-weight:400;
-    color:var(--text-hint);
-    margin-top:2px;
+  @keyframes labelPulse{
+    0%,100%{ text-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 28px rgba(100,210,255,0.7), 0 2px 6px rgba(0,0,0,0.25); }
+    50%    { text-shadow: 0 0 22px rgba(255,255,255,1),   0 0 50px rgba(100,210,255,1),   0 2px 6px rgba(0,0,0,0.25); }
   }
-  .img-radio-card.selected{
-    border-color:var(--gold-dark);
-    box-shadow:0 0 0 1px var(--gold-dark);
-  }
-  .img-radio-card.selected .img-radio-label{
-    background:#FFFCF0;
-    color:var(--gold-deeper);
-  }
-  .img-radio-card .check-badge{
+
+  /* Glow ring around swipe area */
+  .swipe-glow{
     position:absolute;
-    top:7px;right:7px;
-    width:22px;height:22px;
-    border-radius:50%;
-    background:var(--gold-dark);
-    color:white;
-    font-size:13px;
-    font-weight:700;
-    display:none;
-    align-items:center;justify-content:center;
-    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    bottom:36px;
+    left:50%;
+    transform:translateX(-50%);
+    width:180px;
+    height:60px;
+    border-radius:99px;
+    border:1.5px solid rgba(255,255,255,0.4);
+    box-shadow:
+      0 0 18px rgba(100,220,255,0.35),
+      inset 0 0 18px rgba(255,255,255,0.08);
+    animation: glowPulse 2s ease-in-out 2.8s infinite;
+    pointer-events:none;
+    z-index:19;
+    opacity:0;
+    animation: ctaIn 0.8s ease 2.4s forwards, glowPulse 2s ease-in-out 3.2s infinite;
   }
-  .img-radio-card.selected .check-badge{display:flex}
-  .radio-option{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:13px 16px;
-    border:1.5px solid var(--input-border);
-    border-radius:var(--radius-sm);
-    cursor:pointer;
-    transition:all 0.2s;
-    background:#FAFAFA;
+  @keyframes glowPulse{
+    0%,100%{ box-shadow:0 0 18px rgba(100,220,255,0.35), inset 0 0 18px rgba(255,255,255,0.08); }
+    50%    { box-shadow:0 0 38px rgba(100,220,255,0.65), inset 0 0 28px rgba(255,255,255,0.14); }
   }
-  .radio-option input{display:none}
-  .radio-option.selected{
-    border-color:var(--gold-dark);
-    background:#FFFCF0;
+
+  /* ===== TRANSITION OUT ===== */
+  #scene.exit{
+    animation: sceneExit 0.55s cubic-bezier(0.4,0,0.6,1) forwards;
   }
-  .radio-dot{
-    width:18px;height:18px;
-    border-radius:50%;
-    border:2px solid var(--input-border);
-    flex-shrink:0;
-    transition:all 0.2s;
-    display:flex;align-items:center;justify-content:center;
+  @keyframes sceneExit{
+    0%  { opacity:1; transform:scale(1); }
+    100%{ opacity:0; transform:scale(1.06); }
   }
-  .radio-option.selected .radio-dot{
-    border-color:var(--gold-dark);
-    background:var(--gold-dark);
+
+  /* Sparkle particles */
+  .sparkle{
+    position:absolute;
+    pointer-events:none;
+    z-index:15;
+    opacity:0;
+    animation: sparklePop 2.5s ease-in-out infinite;
   }
-  .radio-option.selected .radio-dot::after{
-    content:'';width:6px;height:6px;
-    border-radius:50%;background:white;
-  }
-  .radio-label{font-size:14px;color:var(--text);font-weight:500}
-  .radio-other-input{
-    margin-top:10px;
-    display:none;
-  }
-  .radio-other-input.show{display:block}
-  .hint{font-size:12px;color:var(--text-hint);margin-top:6px;line-height:1.5}
-  .btn-submit{
-    display:block;
-    width:calc(100% - 32px);
-    margin:8px 16px 0;
-    padding:18px;
-    background:#1A1A1A;
-    color:#F3D465;
-    font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:15px;
-    font-weight:700;
-    letter-spacing:0.5px;
-    border:none;
-    border-radius:var(--radius);
-    cursor:pointer;
-    transition:all 0.2s;
-    box-shadow:0 6px 20px rgba(0,0,0,0.18);
-  }
-  .btn-submit:hover{background:#333;transform:translateY(-1px)}
-  .btn-submit:active{transform:translateY(0)}
-  .btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none}
-  .success-card{
-    background:white;
-    border-radius:var(--radius);
-    padding:40px 24px;
-    margin:0 16px;
-    text-align:center;
-    box-shadow:var(--card-shadow);
-    display:none;
-  }
-  .success-icon{
-    width:64px;height:64px;
-    background:#F3D465;
-    border-radius:50%;
-    margin:0 auto 20px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:28px;
-  }
-  .success-title{
-    font-family:'Fraunces',serif;
-    font-size:22px;
-    font-weight:600;
-    margin-bottom:10px;
-    color:var(--text);
-  }
-  .success-msg{font-size:14px;color:var(--text-soft);line-height:1.6}
-  .error-msg{
-    display:none;
-    color:#E24B4A;
-    font-size:12px;
-    margin-top:5px;
-    font-weight:500;
-  }
-  .field.invalid input,.field.invalid select,.field.invalid textarea{
-    border-color:#E24B4A;
-  }
-  .field.invalid .error-msg{display:block}
-  .loading-spinner{
-    display:inline-block;
-    width:18px;height:18px;
-    border:2px solid rgba(243,212,101,0.4);
-    border-top-color:#F3D465;
-    border-radius:50%;
-    animation:spin 0.7s linear infinite;
-    vertical-align:middle;
-    margin-right:8px;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes levitate{
-    0%,100%{transform:translateY(0);}
-    50%{transform:translateY(-6px);}
-  }
-  .page-divider{height:1px;background:rgba(0,0,0,0.06);margin:0 32px}
-  .form-note{
-    font-size:12px;
-    color:rgba(0,0,0,0.4);
-    text-align:center;
-    padding:16px 20px 0;
-  }
-  /* Gender card selected states */
-  .gender-card[data-value="Perempuan"].selected .gender-icon-circle {
-    border-color:rgba(200,100,210,0.8)!important;
-    background:linear-gradient(135deg,rgba(255,180,220,0.45),rgba(200,130,255,0.38))!important;
-    box-shadow:0 0 0 3px rgba(200,100,210,0.2),0 4px 16px rgba(180,80,200,0.2)!important;
-  }
-  .gender-card[data-value="Laki-Laki"].selected .gender-icon-circle {
-    border-color:rgba(60,130,255,0.8)!important;
-    background:linear-gradient(135deg,rgba(120,190,255,0.45),rgba(60,120,255,0.38))!important;
-    box-shadow:0 0 0 3px rgba(60,120,255,0.2),0 4px 16px rgba(40,100,240,0.2)!important;
+  @keyframes sparklePop{
+    0%,100%{ opacity:0; transform:scale(0.5) rotate(0deg); }
+    50%    { opacity:0.85; transform:scale(1) rotate(180deg); }
   }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <!-- Layer 1: Background awan + balon -->
-  <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_1.png" alt="" class="hero-bg">
-  <!-- Layer 4: Logo Markaz Belajar (tengah atas) -->
-  <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png" alt="Markaz Belajar" class="hero-logo">
-  <!-- Layer 2: Text Class of 2026 (float animasi) -->
-  <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png" alt="Class of 2026 Preschool & Elementary" class="hero-text">
-  <!-- Layer 3: Maskot Soma (float animasi, phase beda) -->
-  <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png" alt="Maskot Soma" class="hero-mascot">
-</div>
+<div id="scene">
 
-<form id="regForm">
-
-  <div class="card">
-    <p class="section-label">Data Peserta</p>
-
-    <div class="field" id="f-nama">
-      <label>Nama Lengkap Peserta <span class="req">*</span></label>
-      <input type="text" id="namaLengkap" placeholder="Nama lengkap peserta" required>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
-
-    <div class="field" id="f-jk">
-      <label>Jenis Kelamin <span class="req">*</span></label>
-      <div style="display:flex;gap:16px;justify-content:flex-start;">
-        <!-- Perempuan -->
-        <div class="gender-card" data-value="Perempuan" onclick="selectRadio('jk','Perempuan',this)" style="display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;position:relative;">
-          <input type="radio" name="jk" value="Perempuan" style="display:none;">
-          <div class="gender-icon-circle" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,rgba(255,182,193,0.35),rgba(200,140,255,0.28));border:2.5px solid #E8D5F5;display:flex;align-items:center;justify-content:center;transition:all 0.25s;position:relative;">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="8" r="5" stroke="rgba(180,80,180,0.85)" stroke-width="1.8"/>
-              <line x1="12" y1="13" x2="12" y2="20" stroke="rgba(180,80,180,0.85)" stroke-width="1.8" stroke-linecap="round"/>
-              <line x1="9" y1="17" x2="15" y2="17" stroke="rgba(180,80,180,0.85)" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-            <div class="gender-check" style="display:none;position:absolute;bottom:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#e066c0,#9b3fbf);align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.2);">
-              <svg width="9" height="9" viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </div>
-          </div>
-          <span style="font-size:12px;font-weight:700;color:#8A4A9A;">Perempuan</span>
-        </div>
-        <!-- Laki-Laki -->
-        <div class="gender-card" data-value="Laki-Laki" onclick="selectRadio('jk','Laki-Laki',this)" style="display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;position:relative;">
-          <input type="radio" name="jk" value="Laki-Laki" style="display:none;">
-          <div class="gender-icon-circle" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,rgba(140,200,255,0.35),rgba(80,140,255,0.28));border:2.5px solid #B8D8F5;display:flex;align-items:center;justify-content:center;transition:all 0.25s;position:relative;">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-              <circle cx="10" cy="14" r="5" stroke="rgba(50,100,220,0.85)" stroke-width="1.8"/>
-              <line x1="14.5" y1="9.5" x2="20" y2="4" stroke="rgba(50,100,220,0.85)" stroke-width="1.8" stroke-linecap="round"/>
-              <polyline points="16,4 20,4 20,8" stroke="rgba(50,100,220,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div class="gender-check" style="display:none;position:absolute;bottom:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#4090e8,#2255c8);align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.2);">
-              <svg width="9" height="9" viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </div>
-          </div>
-          <span style="font-size:12px;font-weight:700;color:#2A5CAA;">Laki-Laki</span>
-        </div>
-      </div>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-ttl">
-      <label>Tempat Lahir Peserta <span class="req">*</span></label>
-      <select id="tempatLahir" required>
-        <option value="">Pilih tempat lahir</option>
-        <option>Kabupaten Pandeglang</option>
-        <option>Kabupaten Lebak</option>
-        <option>Kabupaten Serang</option>
-        <option>Kabupaten Tangerang</option>
-        <option>Kota Cilegon</option>
-        <option>Kota Serang</option>
-        <option>Kota Tangerang</option>
-        <option>Kota Tangerang Selatan</option>
-        <option>Lainnya...</option>
-      </select>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-tgl">
-      <label>Tanggal Lahir Peserta <span class="req">*</span></label>
-      <input type="hidden" id="tglLahir" required>
-      <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:8px;">
-        <select id="tglDay" onchange="buildDate('tglLahir','tglDay','tglMonth','tglYear')" style="text-align:center;">
-          <option value="">Tgl</option>
-        </select>
-        <select id="tglMonth" onchange="buildDate('tglLahir','tglDay','tglMonth','tglYear')" style="text-align:center;">
-          <option value="">Bulan</option>
-          <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option>
-          <option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option>
-          <option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option>
-          <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
-        </select>
-        <select id="tglYear" onchange="buildDate('tglLahir','tglDay','tglMonth','tglYear')" style="text-align:center;">
-          <option value="">Thn</option>
-        </select>
-      </div>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
-
-    <div class="field" id="f-anak">
-      <label>Peserta anak ke berapa? <span class="req">*</span></label>
-      <select id="anakKe" required>
-        <option value="">Pilih urutan</option>
-        <option>Pertama (1)</option>
-        <option>Kedua (2)</option>
-        <option>Ketiga (3)</option>
-        <option>Keempat (4)</option>
-      </select>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-sdr">
-      <label>Jumlah bersaudara <span class="req">*</span></label>
-      <select id="jmlSaudara" required>
-        <option value="">Pilih jumlah</option>
-        <option>(Anak tunggal)</option>
-        <option>2 bersaudara</option>
-        <option>3 bersaudara</option>
-        <option>4 bersaudara</option>
-      </select>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-sekolah">
-      <label>Asal Sekolah <span class="req">*</span></label>
-      <div class="radio-group">
-        <div class="radio-option" data-value="Belum Sekolah" onclick="selectRadio('sekolah','Belum Sekolah',this)">
-          <input type="radio" name="sekolah" value="Belum Sekolah">
-          <div class="radio-dot"></div>
-          <span class="radio-label">Belum Sekolah</span>
-        </div>
-        <div class="radio-option" data-value="__other__" onclick="selectRadio('sekolah','__other__',this)">
-          <input type="radio" name="sekolah" value="__other__">
-          <div class="radio-dot"></div>
-          <span class="radio-label">Lainnya (tulis nama sekolah)</span>
-        </div>
-      </div>
-      <div class="radio-other-input" id="sekolah-other">
-        <input type="text" id="sekolahOther" placeholder="Nama sekolah">
-      </div>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-kelas">
-      <label>Kelas saat ini <span class="req">*</span></label>
-      <select id="kelas" required>
-        <option value="">Pilih kelas</option>
-        <option>Belum Sekolah</option>
-        <option>Kelas 1 - 2</option>
-        <option>Kelas 2 - 4</option>
-        <option>Kelas 5 - 6</option>
-      </select>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-alamat">
-      <label>Alamat Lengkap Peserta <span class="req">*</span></label>
-      <textarea id="alamat" placeholder="Contoh: Jl. Prinitis Utama, Blok SC 4 No 22 Tangerang, Banten" required></textarea>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
+  <!-- Layer 1: Clouds parallax (double-wide background) -->
+  <div id="clouds-layer">
+    <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_1.png" alt="">
+    <!-- Mirror copy untuk seamless loop -->
+    <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_1.png" alt="" style="position:absolute;left:50%;top:0;width:50%;height:100%;object-fit:cover;">
   </div>
 
-  <div class="card">
-    <p class="section-label">Data Ibu</p>
-
-    <div class="field" id="f-namaIbu">
-      <label>Nama Ibu <span class="req">*</span></label>
-      <input type="text" id="namaIbu" placeholder="Nama lengkap ibu" required>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
-
-    <div class="field" id="f-tglIbu">
-      <label>Tanggal Lahir Wali Peserta <span class="req">*</span></label>
-      <input type="hidden" id="tglLahirWali" required>
-      <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:8px;">
-        <select id="waliDay" onchange="buildDate('tglLahirWali','waliDay','waliMonth','waliYear')" style="text-align:center;">
-          <option value="">Tgl</option>
-        </select>
-        <select id="waliMonth" onchange="buildDate('tglLahirWali','waliDay','waliMonth','waliYear')" style="text-align:center;">
-          <option value="">Bulan</option>
-          <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option>
-          <option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option>
-          <option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option>
-          <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
-        </select>
-        <select id="waliYear" onchange="buildDate('tglLahirWali','waliDay','waliMonth','waliYear')" style="text-align:center;">
-          <option value="">Thn</option>
-        </select>
-      </div>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
-
-    <div class="field" id="f-ttlIbu">
-      <label>Tempat Lahir Wali Peserta <span class="req">*</span></label>
-      <select id="tempatLahirWali" required>
-        <option value="">Pilih tempat lahir</option>
-        <option>Kabupaten Pandeglang</option>
-        <option>Kabupaten Lebak</option>
-        <option>Kabupaten Serang</option>
-        <option>Kabupaten Tangerang</option>
-        <option>Kota Cilegon</option>
-        <option>Kota Serang</option>
-        <option>Kota Tangerang</option>
-        <option>Kota Tangerang Selatan</option>
-        <option>Lainnya...</option>
-      </select>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-pkjIbu">
-      <label>Pekerjaan Ibu <span class="req">*</span></label>
-      <div class="radio-grid-2">
-        <div class="radio-option" data-value="Karyawan Swasta" onclick="selectRadio('pkjIbu','Karyawan Swasta',this)">
-          <input type="radio" name="pkjIbu"><div class="radio-dot"></div><span class="radio-label">Karyawan Swasta</span>
-        </div>
-        <div class="radio-option" data-value="Wiraswasta" onclick="selectRadio('pkjIbu','Wiraswasta',this)">
-          <input type="radio" name="pkjIbu"><div class="radio-dot"></div><span class="radio-label">Wiraswasta</span>
-        </div>
-        <div class="radio-option" data-value="PNS/TNI/Polri" onclick="selectRadio('pkjIbu','PNS/TNI/Polri',this)">
-          <input type="radio" name="pkjIbu"><div class="radio-dot"></div><span class="radio-label">PNS/TNI/Polri</span>
-        </div>
-        <div class="radio-option" data-value="Ibu Rumah Tangga" onclick="selectRadio('pkjIbu','Ibu Rumah Tangga',this)">
-          <input type="radio" name="pkjIbu"><div class="radio-dot"></div><span class="radio-label">Ibu Rumah Tangga</span>
-        </div>
-        <div class="radio-option radio-full" data-value="__other__" onclick="selectRadio('pkjIbu','__other__',this)">
-          <input type="radio" name="pkjIbu"><div class="radio-dot"></div><span class="radio-label">Lainnya</span>
-        </div>
-      </div>
-      <div class="radio-other-input" id="pkjIbu-other">
-        <input type="text" id="pkjIbuOther" placeholder="Pekerjaan lainnya">
-      </div>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-
-    <div class="field" id="f-waIbu">
-      <label style="display:flex;align-items:center;gap:8px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:rgba(0,0,0,0.06);border-radius:6px;border:1px solid rgba(0,0,0,0.1);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </span>
-        WhatsApp Ibu <span class="req">*</span>
-      </label>
-      <input type="text" id="waIbu" placeholder="Contoh: 08123456789" required>
-      <p class="hint">Pastikan nomor dapat dihubungi</p>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
+  <!-- Sparkle stars -->
+  <div class="sparkle" style="top:18%;left:8%;animation-delay:0.5s;">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white" opacity="0.9"/></svg>
+  </div>
+  <div class="sparkle" style="top:12%;right:14%;animation-delay:1.2s;">
+    <svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white" opacity="0.85"/></svg>
+  </div>
+  <div class="sparkle" style="top:28%;left:18%;animation-delay:2.1s;">
+    <svg width="10" height="10" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white" opacity="0.7"/></svg>
+  </div>
+  <div class="sparkle" style="top:22%;right:28%;animation-delay:0.8s;">
+    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="rgba(255,240,150,0.9)"/></svg>
   </div>
 
-  <div class="card">
-    <p class="section-label">Data Ayah</p>
+  <!-- Layer 4: Logo (top center) -->
+  <img id="logo"
+    src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png"
+    alt="Markaz Belajar">
 
-    <div class="field" id="f-namaAyah">
-      <label>Nama Ayah <span class="req">*</span></label>
-      <input type="text" id="namaAyah" placeholder="Nama lengkap ayah" required>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
+  <!-- Layer 3: Class of 2026 text (center) -->
+  <img id="class-text"
+    src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png"
+    alt="Class of 2026 Preschool & Elementary">
 
-    <div class="field" id="f-pkjAyah">
-      <label>Pekerjaan Ayah <span class="req">*</span></label>
-      <div class="radio-grid-2">
-        <div class="radio-option" data-value="Karyawan Swasta" onclick="selectRadio('pkjAyah','Karyawan Swasta',this)">
-          <input type="radio" name="pkjAyah"><div class="radio-dot"></div><span class="radio-label">Karyawan Swasta</span>
-        </div>
-        <div class="radio-option" data-value="Wiraswasta" onclick="selectRadio('pkjAyah','Wiraswasta',this)">
-          <input type="radio" name="pkjAyah"><div class="radio-dot"></div><span class="radio-label">Wiraswasta</span>
-        </div>
-        <div class="radio-option" data-value="PNS/TNI/Polri" onclick="selectRadio('pkjAyah','PNS/TNI/Polri',this)">
-          <input type="radio" name="pkjAyah"><div class="radio-dot"></div><span class="radio-label">PNS/TNI/Polri</span>
-        </div>
-        <div class="radio-option" data-value="Pensiun" onclick="selectRadio('pkjAyah','Pensiun',this)">
-          <input type="radio" name="pkjAyah"><div class="radio-dot"></div><span class="radio-label">Pensiun</span>
-        </div>
-        <div class="radio-option radio-full" data-value="__other__" onclick="selectRadio('pkjAyah','__other__',this)">
-          <input type="radio" name="pkjAyah"><div class="radio-dot"></div><span class="radio-label">Lainnya</span>
-        </div>
+  <!-- Layer 2: Maskot Soma (flies up from bottom right) -->
+  <img id="mascot"
+    src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png"
+    alt="Maskot Soma">
+
+  <!-- Glow ring -->
+  <div class="swipe-glow"></div>
+
+  <!-- Swipe Up CTA -->
+  <div id="swipe-cta" onclick="goToForm()">
+    <div class="arrows">
+      <div class="arrow-chevron">
+        <svg viewBox="0 0 32 16"><polyline points="4,12 16,4 28,12"/></svg>
       </div>
-      <div class="radio-other-input" id="pkjAyah-other">
-        <input type="text" id="pkjAyahOther" placeholder="Pekerjaan lainnya">
+      <div class="arrow-chevron">
+        <svg viewBox="0 0 32 16"><polyline points="4,12 16,4 28,12"/></svg>
       </div>
-      <p class="error-msg">Wajib dipilih</p>
+      <div class="arrow-chevron">
+        <svg viewBox="0 0 32 16"><polyline points="4,12 16,4 28,12"/></svg>
+      </div>
     </div>
-
-    <div class="field" id="f-waAyah">
-      <label style="display:flex;align-items:center;gap:8px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:rgba(0,0,0,0.06);border-radius:6px;border:1px solid rgba(0,0,0,0.1);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </span>
-        WhatsApp Ayah <span class="req">*</span>
-      </label>
-      <input type="text" id="waAyah" placeholder="Contoh: 08123456789" required>
-      <p class="hint">Pastikan nomor dapat dihubungi</p>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
-
-    <div class="field">
-      <label>Email Ayah <span style="font-weight:400;color:var(--text-hint)">(opsional)</span></label>
-      <input type="email" id="emailAyah" placeholder="email@contoh.com">
-    </div>
+    <div class="swipe-label">Swipe up !</div>
   </div>
 
-  <div class="card">
-    <p class="section-label">Kontak &amp; Sosial Media</p>
-
-    <div class="field" id="f-kontakDarurat">
-      <label style="display:flex;align-items:center;gap:8px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:rgba(0,0,0,0.06);border-radius:6px;border:1px solid rgba(0,0,0,0.1);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.59 3.44 2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.35 6.35l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </span>
-        Kontak Darurat <span class="req">*</span>
-      </label>
-      <input type="text" id="kontakDarurat" placeholder="Nomor WhatsApp darurat" required>
-      <p class="hint">Selain nomor orang tua/wali utama</p>
-      <p class="error-msg">Wajib diisi</p>
-    </div>
-
-    <div class="field">
-      <label style="display:flex;align-items:center;gap:8px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:rgba(0,0,0,0.06);border-radius:6px;border:1px solid rgba(0,0,0,0.1);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#333" stroke="none"/></svg>
-        </span>
-        Instagram Orang Tua <span style="font-weight:400;color:var(--text-hint)">(opsional)</span>
-      </label>
-      <input type="text" id="instagram" placeholder="@username">
-      <div style="display:flex;align-items:center;justify-content:flex-start;margin-top:8px;">
-        <button type="button" onclick="openIgModal()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,0.07);color:#333;border:1px solid rgba(0,0,0,0.12);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#333" stroke="none"/></svg>
-          Lihat @markaz.belajar
-        </button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label style="display:flex;align-items:center;gap:8px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:rgba(0,0,0,0.06);border-radius:6px;border:1px solid rgba(0,0,0,0.1);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#333"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34l-.03-7.69a8.16 8.16 0 0 0 4.77 1.52V5.69a4.85 4.85 0 0 1-1-.3z"/></svg>
-        </span>
-        TikTok Orang Tua <span style="font-weight:400;color:var(--text-hint)">(opsional)</span>
-      </label>
-      <input type="text" id="tiktok" placeholder="@username">
-    </div>
-  </div>
-
-<!-- ===== INSTAGRAM MODAL ===== -->
-<div id="igModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1500;align-items:flex-end;justify-content:center;">
-  <div style="background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:0;overflow:hidden;max-height:85vh;display:flex;flex-direction:column;">
-    <div style="padding:16px 20px 12px;border-bottom:1px solid #F0F0F0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:2px;flex-shrink:0;">
-          <div style="width:100%;height:100%;border-radius:50%;border:2px solid white;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743);display:flex;align-items:center;justify-content:center;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </div>
-        </div>
-        <div>
-          <div style="font-weight:700;font-size:14px;color:#1A1A1A;">markaz.belajar</div>
-          <div style="font-size:11px;color:#9A9A9A;">Markaz Belajar Official</div>
-        </div>
-      </div>
-      <button onclick="closeIgModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#9A9A9A;padding:4px;">✕</button>
-    </div>
-    <div style="padding:16px 20px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;">
-      <div style="background:linear-gradient(135deg,#FFF9E6,#FFFCF0);border:1.5px solid #F3D465;border-radius:14px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:13px;color:#5A5A5A;line-height:1.6;margin-bottom:10px;">Markaz Belajar® | Anyer &amp; Jak-bar<br>Montessori × Letterland × 保育園・幼稚園<br>🌕 CALISTUNG | ENGLISH KIDS | TAHFIDZ<br>🌕 MATIKA SD | MAPEL SD • Bimbel Lisensi<br><span style="color:#8A6F0E;font-size:12px;">Jl. Raya Sirih Karang Bolong Anyer, Banten</span></div>
-        <div style="display:flex;gap:16px;text-align:center;">
-          <div><div style="font-weight:800;font-size:16px;color:#1A1A1A;">21</div><div style="font-size:11px;color:#9A9A9A;">Postingan</div></div>
-          <div><div style="font-weight:800;font-size:16px;color:#1A1A1A;">233</div><div style="font-size:11px;color:#9A9A9A;">Followers</div></div>
-          <div><div style="font-weight:800;font-size:16px;color:#1A1A1A;">67</div><div style="font-size:11px;color:#9A9A9A;">Following</div></div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:16px;">
-        <div style="aspect-ratio:1;background:linear-gradient(135deg,#F3D465,#C9A827);border-radius:4px;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 3L8 7H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3L12 3z" stroke="white" stroke-width="2"/><circle cx="12" cy="13" r="3" stroke="white" stroke-width="2"/></svg></div>
-        <div style="aspect-ratio:1;background:linear-gradient(135deg,#C9A827,#8A6F0E);border-radius:4px;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 6L8 10v7c0 4.5 3.5 8 8 9 4.5-1 8-4.5 8-9v-7L16 6" stroke="white" stroke-width="2"/></svg></div>
-        <div style="aspect-ratio:1;background:linear-gradient(135deg,#F3D465,#C9A827);border-radius:4px;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke="white" stroke-width="2"/><line x1="3" y1="12" x2="21" y2="12" stroke="white" stroke-width="2"/></svg></div>
-      </div>
-      <a href="https://www.instagram.com/markaz.belajar/" target="_blank" style="display:block;text-align:center;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366);color:white;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit;">
-        Buka di Instagram
-      </a>
-    </div>
-  </div>
-</div>
-
-  <!-- STEP 1: Pilih jenjang -->
-  <div class="card" id="card-jenjang">
-    <p class="section-label">Program Kelas</p>
-    <div class="field" id="f-program">
-      <label>Pilih Jenjang <span class="req">*</span></label>
-      <p class="program-desc" style="margin-bottom:12px;">Pilih jenjang sesuai usia anak</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div id="btn-preschool" onclick="selectJenjang('preschool')" style="border:2px solid #E0E0E0;border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all 0.2s;background:#FAFAFA;">
-          <div style="width:40px;height:40px;background:#F3F3F3;border-radius:10px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8A6F0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-          </div>
-          <div style="font-size:13px;font-weight:800;color:#8A6F0E;letter-spacing:0.3px;">PRESCHOOL</div>
-          <div style="font-size:11px;font-weight:500;color:#C9A827;margin-top:3px;">Usia 3 – 7 Tahun</div>
-        </div>
-        <div id="btn-elementary" onclick="selectJenjang('elementary')" style="border:2px solid #E0E0E0;border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all 0.2s;background:#FAFAFA;">
-          <div style="width:40px;height:40px;background:#F3F3F3;border-radius:10px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19h16"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
-          </div>
-          <div style="font-size:13px;font-weight:800;color:#1A5C9A;letter-spacing:0.3px;">ELEMENTARY</div>
-          <div style="font-size:11px;font-weight:500;color:#2E86DE;margin-top:3px;">Usia 7 – 12 Tahun</div>
-        </div>
-      </div>
-      <p class="error-msg">Wajib dipilih</p>
-    </div>
-  </div>
-
-  <!-- STEP 2: Pilih program (muncul setelah jenjang dipilih) -->
-  <div class="card" id="card-program" style="display:none;opacity:0;transition:opacity 0.3s;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <button type="button" onclick="backToJenjang()" style="width:32px;height:32px;border:1.5px solid #E0E0E0;border-radius:8px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5A5A5A" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div>
-        <p class="section-label" style="margin-bottom:0;" id="program-section-label">Program</p>
-        <p style="font-size:11px;color:var(--text-hint);margin-top:2px;" id="program-section-sub">Pilih program yang sesuai</p>
-      </div>
-    </div>
-    <div class="field" id="f-program-detail">
-      <div class="img-radio-grid" id="program-grid">
-        <!-- diisi JS -->
-      </div>
-      <p class="error-msg" id="program-detail-err" style="display:none;">Wajib dipilih</p>
-    </div>
-  </div>
-
-  <!-- STEP 3: Pilih tipe (Reguler/Private) — muncul setelah program dipilih -->
-  <div class="card" id="card-tipe" style="display:none;opacity:0;transition:opacity 0.3s;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <button type="button" onclick="backToProgram()" style="width:32px;height:32px;border:1.5px solid #E0E0E0;border-radius:8px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5A5A5A" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div>
-        <p class="section-label" style="margin-bottom:0;">Jenis Kelas</p>
-        <p style="font-size:11px;color:var(--text-hint);margin-top:2px;">Pilih tipe pembelajaran</p>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div id="tipe-reguler-btn" onclick="selectTipe('reguler')" style="border:2px solid #E0E0E0;border-radius:14px;padding:20px 12px;text-align:center;cursor:pointer;transition:all 0.2s;background:#FAFAFA;">
-        <div style="width:44px;height:44px;background:#F3F3F3;border-radius:12px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8A6F0E" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div style="font-size:13px;font-weight:800;color:#8A6F0E;">REGULER</div>
-        <div style="font-size:11px;color:#C9A827;margin-top:3px;">Kelas Bersama</div>
-      </div>
-      <div id="tipe-private-btn" onclick="selectTipe('private')" style="border:2px solid #E0E0E0;border-radius:14px;padding:20px 12px;text-align:center;cursor:pointer;transition:all 0.2s;background:#FAFAFA;">
-        <div style="width:44px;height:44px;background:#F3F3F3;border-radius:12px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A5C9A" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-4 3.1-7 7-7s7 3 7 7"/></svg>
-        </div>
-        <div style="font-size:13px;font-weight:800;color:#1A5C9A;">PRIVATE</div>
-        <div style="font-size:11px;color:#2E86DE;margin-top:3px;">Satu-satu</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 4a: Detail Reguler -->
-  <div class="card" id="card-reguler" style="display:none;opacity:0;transition:opacity 0.3s;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <button type="button" onclick="backToTipe()" style="width:32px;height:32px;border:1.5px solid #E0E0E0;border-radius:8px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5A5A5A" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div>
-        <p class="section-label" style="margin-bottom:0;">Kelas Reguler</p>
-        <p style="font-size:11px;color:var(--text-hint);margin-top:2px;">Belajar bersama teman</p>
-      </div>
-    </div>
-    <div class="field" id="f-jenis-reguler">
-      <div class="img-radio-grid">
-        <div class="img-radio-card" data-value="REGULER - Perbulan" onclick="selectJenis('REGULER - Perbulan',this)">
-          <input type="radio" name="jenis">
-          <div class="check-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="img-radio-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="7" cy="14" r="1.5" fill="white" stroke="none"/></svg></div>
-          <div class="img-radio-label">Perbulan <span>Reguler</span></div>
-        </div>
-        <div class="img-radio-card" data-value="REGULER - Paket 3 Bulan" onclick="selectJenis('REGULER - Paket 3 Bulan',this)">
-          <input type="radio" name="jenis">
-          <div class="check-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="img-radio-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><text x="7" y="19" fill="white" font-size="7" stroke="none" font-family="sans-serif" font-weight="700">×3</text></svg></div>
-          <div class="img-radio-label">Paket 3 Bln <span>Reguler</span></div>
-        </div>
-        <div class="img-radio-card" data-value="REGULER - Paket 6 Bulan" onclick="selectJenis('REGULER - Paket 6 Bulan',this)">
-          <input type="radio" name="jenis">
-          <div class="check-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="img-radio-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><text x="7" y="19" fill="white" font-size="7" stroke="none" font-family="sans-serif" font-weight="700">×6</text></svg></div>
-          <div class="img-radio-label">Paket 6 Bln <span>Reguler</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 4b: Detail Private -->
-  <div class="card" id="card-private" style="display:none;opacity:0;transition:opacity 0.3s;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <button type="button" onclick="backToTipe()" style="width:32px;height:32px;border:1.5px solid #E0E0E0;border-radius:8px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5A5A5A" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div>
-        <p class="section-label" style="margin-bottom:0;">Kelas Private</p>
-        <p style="font-size:11px;color:var(--text-hint);margin-top:2px;">Belajar satu-satu dengan guru</p>
-      </div>
-    </div>
-    <div class="field" id="f-jenis-private">
-      <div class="img-radio-grid">
-        <div class="img-radio-card" data-value="PRIVATE - Perbulan" onclick="selectJenis('PRIVATE - Perbulan',this)">
-          <input type="radio" name="jenis">
-          <div class="check-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="img-radio-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="9" r="4"/><path d="M5 20c0-4 3.1-7 7-7s7 3 7 7"/></svg></div>
-          <div class="img-radio-label">Perbulan <span>Private</span></div>
-        </div>
-        <div class="img-radio-card" data-value="PRIVATE - Paket 3 Bulan" onclick="selectJenis('PRIVATE - Paket 3 Bulan',this)">
-          <input type="radio" name="jenis">
-          <div class="check-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="img-radio-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="9" r="3.5"/><path d="M4 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><text x="17" y="15" fill="white" font-size="8" stroke="none" font-family="sans-serif" font-weight="700">3</text></svg></div>
-          <div class="img-radio-label">Paket 3 Bln <span>Private</span></div>
-        </div>
-        <div class="img-radio-card" data-value="PRIVATE - Paket 6 Bulan" onclick="selectJenis('PRIVATE - Paket 6 Bulan',this)">
-          <input type="radio" name="jenis">
-          <div class="check-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="img-radio-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="9" r="3.5"/><path d="M4 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><text x="17" y="15" fill="white" font-size="8" stroke="none" font-family="sans-serif" font-weight="700">6</text></svg></div>
-          <div class="img-radio-label">Paket 6 Bln <span>Private</span></div>
-        </div>
-      </div>
-      <div style="display:none;" id="f-jenis"><input type="hidden" id="jenis-hidden"></div>
-    </div>
-  </div>
-
-  <button type="submit" class="btn-submit" id="submitBtn">
-    Daftar Sekarang
-  </button>
-
-</form>
-
-<!-- ===== LEARNING AGREEMENT MODAL ===== -->
-<div id="laOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:flex-end;justify-content:center;">
-  <div id="laSheet" style="background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.34,1.2,0.64,1);">
-    <div style="padding:16px 24px 0;flex-shrink:0;">
-      <div style="width:40px;height:4px;background:#E0E0E0;border-radius:4px;margin:0 auto 16px;"></div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-        <div style="width:36px;height:36px;background:#F3D465;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
-        <div>
-          <p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#9A9A9A;font-weight:700;">Markaz Belajar</p>
-          <h2 style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.2;">Learning Agreement</h2>
-        </div>
-      </div>
-      <p style="font-size:12px;color:#9A9A9A;padding:8px 0 12px;">Baca hingga selesai untuk mengaktifkan tombol persetujuan</p>
-      <div style="height:1px;background:#F0F0F0;"></div>
-    </div>
-
-    <div id="laScroll" style="overflow-y:auto;flex:1;padding:20px 24px 8px;-webkit-overflow-scrolling:touch;">
-      <div style="font-size:13.5px;color:#2A2A2A;line-height:1.75;">
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">A. Ketentuan Penerimaan</p>
-        <p style="margin-bottom:20px;">Dengan melakukan pendaftaran dan mengikuti layanan pembelajaran di Markaz Belajar, orang tua/wali menyetujui untuk terikat pada seluruh ketentuan dalam Learning Agreement ini. Apabila terdapat ketentuan yang tidak disetujui, maka peserta didik tidak dapat mengikuti layanan pembelajaran yang diselenggarakan oleh Markaz Belajar.</p>
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">B. Deskripsi Layanan</p>
-        <p style="margin-bottom:20px;">Markaz Belajar menyelenggarakan layanan bimbingan belajar yang meliputi program Calistung, Tahfidz, Bahasa Inggris, Matematika, serta pendampingan mata pelajaran tingkat sekolah dasar lainnya. Markaz Belajar berhak melakukan penyesuaian metode pembelajaran, materi, jadwal, maupun struktur program guna menjaga kualitas dan efektivitas pembelajaran.</p>
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">C. Jadwal & Kehadiran</p>
-        <ol style="margin-bottom:20px;padding-left:18px;display:flex;flex-direction:column;gap:8px;">
-          <li>Jadwal pembelajaran <strong>ditetapkan berdasarkan kesepakatan awal</strong> antara orang tua/wali dan Markaz Belajar.</li>
-          <li>Peserta didik <strong>wajib mengikuti jadwal pembelajaran</strong> yang telah disepakati.</li>
-          <li><strong>Ketidakhadiran wajib diinformasikan minimal H-1</strong> sebelum jadwal belajar.</li>
-          <li>Ketidakhadiran tanpa pemberitahuan H-1 dianggap gugur dan tetap dihitung sebagai sesi belajar berjalan.</li>
-        </ol>
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">D. Penggantian Jadwal</p>
-        <ol style="margin-bottom:20px;padding-left:18px;display:flex;flex-direction:column;gap:8px;">
-          <li>Penggantian jadwal hanya diperbolehkan <strong>maksimal 1 (satu) kali dalam 1 bulan.</strong></li>
-          <li>Pemberitahuan disampaikan <strong>minimal H-1</strong> dan waktu penggantian mengikuti jam belajar yang sama.</li>
-          <li>Hak penggantian jadwal berlaku per bulan, tidak dapat diakumulasi, dan hangus apabila tidak digunakan dalam bulan berjalan.</li>
-          <li>Hak penggantian <strong>tidak dapat dirapel</strong> dan <strong>tidak dapat dialihkan</strong> ke bulan berikutnya.</li>
-        </ol>
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">E. Waktu Mulai Pembelajaran</p>
-        <ol style="margin-bottom:20px;padding-left:18px;display:flex;flex-direction:column;gap:8px;">
-          <li>Waktu mulai pembelajaran mengacu pada tanggal mulai belajar yang disepakati, <strong>bukan tanggal pembayaran.</strong></li>
-          <li>Apabila pembayaran dilakukan setelah tanggal mulai belajar, jadwal tetap berjalan dan sesi yang terlewat tidak dapat diganti.</li>
-        </ol>
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">F. Ketentuan Pembayaran</p>
-        <ol style="margin-bottom:20px;padding-left:18px;display:flex;flex-direction:column;gap:8px;">
-          <li>Pembayaran dilakukan berdasarkan periode bulanan yang ditetapkan, <strong>bukan berdasarkan kehadiran.</strong></li>
-          <li>Pembayaran dilakukan sebelum atau pada tanggal jatuh tempo yang disepakati.</li>
-          <li>Batas toleransi keterlambatan pembayaran adalah <strong>maksimal 7 hari kalender</strong> sejak jatuh tempo.</li>
-          <li>Apabila melewati batas toleransi, kegiatan pembelajaran dapat ditunda sementara dan sesi terjadwal tetap dihitung.</li>
-        </ol>
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">G. Komitmen Markaz Belajar</p>
-        <p style="margin-bottom:6px;">Markaz Belajar berkomitmen untuk:</p>
-        <ol style="margin-bottom:20px;padding-left:18px;display:flex;flex-direction:column;gap:8px;">
-          <li>Menyediakan guru yang kompeten dan siap mengajar sesuai jadwal.</li>
-          <li>Menjaga konsistensi dan profesionalitas proses pembelajaran.</li>
-          <li>Memberikan layanan pembelajaran yang terstruktur dan berkelanjutan.</li>
-        </ol>
-
-        <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A6F0E;margin-bottom:16px;padding-bottom:8px;border-bottom:1.5px solid #F3D465;">H–J. Ketentuan Lain</p>
-        <p style="margin-bottom:10px;"><strong>Batasan Tanggung Jawab:</strong> Markaz Belajar tidak bertanggung jawab atas gangguan pembelajaran yang disebabkan oleh hal-hal di luar kendali wajar, termasuk ketidakhadiran peserta didik, keterlambatan pembayaran, atau kondisi force majeure.</p>
-        <p style="margin-bottom:10px;"><strong>Hukum yang Berlaku:</strong> Learning Agreement ini diatur berdasarkan hukum yang berlaku di Republik Indonesia.</p>
-        <p style="margin-bottom:24px;"><strong>Perubahan Ketentuan:</strong> Markaz Belajar berhak melakukan perubahan terhadap Learning Agreement ini apabila diperlukan. Setiap perubahan akan disampaikan kepada orang tua/wali.</p>
-
-        <!-- Sentinal scroll -->
-        <div id="laSentinel" style="height:1px;"></div>
-      </div>
-    </div>
-
-    <div style="padding:16px 24px 28px;flex-shrink:0;border-top:1px solid #F0F0F0;background:#fff;border-radius:0 0 0 0;">
-      <label id="laCheckLabel" style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin-bottom:16px;opacity:0.4;pointer-events:none;transition:opacity 0.3s;">
-        <div id="laCheckBox" style="width:22px;height:22px;border:2px solid #C9A827;border-radius:6px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;background:#fff;">
-        </div>
-        <span style="font-size:13px;color:#1A1A1A;line-height:1.5;font-weight:500;">Dengan ini saya, selaku orang tua/wali, menyatakan telah membaca, memahami, dan menyetujui seluruh isi Learning Agreement Markaz Belajar serta bersedia mematuhi semua aturan, tata tertib, dan panduan pembelajaran yang berlaku.</span>
-      </label>
-      <button id="laAgreeBtn" onclick="submitAfterAgree()" disabled style="display:block;width:100%;padding:16px;background:#E0E0E0;color:#9A9A9A;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;border:none;border-radius:14px;cursor:not-allowed;transition:all 0.3s;">
-        Saya Setuju &amp; Daftar
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== SPLASH SCREEN ===== -->
-<div id="splashScreen" style="display:none;position:fixed;inset:0;background:#F3D465;z-index:2000;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
-  <canvas id="confettiCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></canvas>
-  <div style="position:relative;z-index:1;">
-    <div id="splashIcon" style="font-size:72px;margin-bottom:8px;animation:splashPop 0.6s cubic-bezier(0.34,1.6,0.64,1) both;"></div>
-    <h2 style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:#1A1A1A;margin-bottom:8px;animation:splashFade 0.5s 0.2s both;">Pendaftaran Terkirim!</h2>
-    <p style="font-size:14px;color:rgba(0,0,0,0.6);max-width:280px;margin:0 auto;line-height:1.6;animation:splashFade 0.5s 0.35s both;">Data berhasil dikirim ke panitia Markaz Belajar.<br>Tim kami akan menghubungi kamu via WhatsApp.</p>
-    <div style="margin-top:32px;animation:splashFade 0.5s 0.5s both;">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.08);padding:10px 20px;border-radius:99px;">
-        <span style="font-size:14px;font-weight:600;color:#1A1A1A;">Learning Agreement Disetujui</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== PROGRESS BUBBLE GAME ===== -->
-<div id="progressBubble" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;pointer-events:none;width:calc(100% - 32px);max-width:448px;">
-  <div style="background:#1A1A1A;border-radius:16px;padding:10px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.28);display:flex;align-items:center;gap:12px;pointer-events:auto;">
-    <!-- Flame GIF -->
-    <div style="flex-shrink:0;width:42px;height:42px;display:flex;align-items:center;justify-content:center;">
-      <img src="https://media.tenor.com/8GFxTHsFX4MAAAAC/fire-flame.gif" alt="🔥" style="width:42px;height:42px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-      <div style="display:none;font-size:28px;line-height:1;">🔥</div>
-    </div>
-    <!-- Status label -->
-    <div style="flex:1;min-width:0;">
-      <div style="font-size:11px;font-weight:700;color:#F3D465;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">Progress Formulir</div>
-      <div>
-        <span id="xpStatus" style="font-size:10px;color:#9A9A9A;">Mulai isi formulir...</span>
-        <span id="xpStars" style="font-size:10px;color:#F3D465;font-weight:700;margin-left:6px;"></span>
-      </div>
-    </div>
-    <!-- Percentage only — big, animated, no bar/box -->
-    <div id="progressPct" style="font-size:22px;font-weight:900;color:#F3D465;animation:levitate 2s ease-in-out infinite;letter-spacing:-0.5px;flex-shrink:0;min-width:48px;text-align:right;">0%</div>
-  </div>
-</div>
-
-<!-- Star popup overlay -->
-<div id="starPopup" style="display:none;position:fixed;inset:0;z-index:900;pointer-events:none;align-items:center;justify-content:center;">
-  <img id="starPopupImg" src="https://cdn.pixabay.com/animation/2024/01/29/08/16/08-16-37-226_512.gif" alt="⭐" style="width:180px;height:180px;object-fit:contain;transform:translateY(120px);transition:transform 0.25s cubic-bezier(0.34,1.6,0.64,1),opacity 0.25s;opacity:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-  <div id="starPopupFallback" style="display:none;font-size:80px;transform:translateY(120px);transition:transform 0.25s cubic-bezier(0.34,1.6,0.64,1),opacity 0.25s;opacity:0;">⭐</div>
 </div>
 
 <script>
-/* ===== RADIO ===== */
-const radioValues = {};
-function selectRadio(name, value, el) {
-  document.querySelectorAll(`[onclick*="selectRadio('${name}'"]`).forEach(opt => {
-    opt.classList.remove('selected');
-    // Reset gender card styling
-    const gc = opt.querySelector('.gender-check');
-    if (gc) gc.style.display = 'none';
-  });
-  el.classList.add('selected');
-  // Show gender card check badge
-  const gc = el.querySelector('.gender-check');
-  if (gc) gc.style.display = 'flex';
-  radioValues[name] = value;
-  const otherDiv = document.getElementById(`${name}-other`);
-  if (otherDiv) {
-    if (value === '__other__') otherDiv.classList.add('show');
-    else otherDiv.classList.remove('show');
-  }
-  const field = document.getElementById(`f-${name}`);
-  if (field) field.classList.remove('invalid');
-  updateProgress();
-}
-
-/* ===== DATE BUILDER ===== */
-function fillDays(dayId, maxDay) {
-  const sel = document.getElementById(dayId);
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">Tgl</option>';
-  for (let d = 1; d <= maxDay; d++) {
-    const v = String(d).padStart(2,'0');
-    sel.innerHTML += '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+d+'</option>';
-  }
-}
-function getDaysInMonth(month, year) {
-  if (!month) return 31;
-  return new Date(year || 2000, parseInt(month), 0).getDate();
-}
-function buildDate(hiddenId, dayId, monthId, yearId) {
-  const d = document.getElementById(dayId).value;
-  const m = document.getElementById(monthId).value;
-  const y = document.getElementById(yearId).value;
-  const maxD = getDaysInMonth(m, y);
-  fillDays(dayId, maxD);
-  if (d && parseInt(d) > maxD) document.getElementById(dayId).value = '';
-  const dv = document.getElementById(dayId).value;
-  const hidden = document.getElementById(hiddenId);
-  hidden.value = (dv && m && y) ? (y+'-'+m+'-'+dv) : '';
-  const fId = hiddenId === 'tglLahir' ? 'f-tgl' : 'f-tglIbu';
-  const fEl = document.getElementById(fId);
-  if (fEl && hidden.value) fEl.classList.remove('invalid');
-  updateProgress();
-}
-window.addEventListener('DOMContentLoaded', () => {
-  ['tglDay','waliDay'].forEach(id => fillDays(id, 31));
-  const curY = new Date().getFullYear();
-  ['tglYear','waliYear'].forEach((id, i) => {
-    const sel = document.getElementById(id);
-    const minY = i===0 ? curY-18 : curY-80;
-    const maxY = i===0 ? curY-2 : curY-18;
-    for (let y = maxY; y >= minY; y--) {
-      sel.innerHTML += '<option value="'+y+'">'+y+'</option>';
-    }
-  });
-
-  // ===== SCROLL PARALLAX — card pertama naik overlap hero saat scroll =====
-  const firstCard = document.querySelector('.card:first-of-type');
-  const hero = document.querySelector('.hero');
-  function onScroll() {
-    const scrollY = window.scrollY || window.pageYOffset;
-    const heroH = hero ? hero.offsetHeight : 334;
-    // Mulai overlap setelah scroll 30px, max overlap 80px
-    const overlap = Math.min(Math.max((scrollY - 30) * 1.2, 0), 80);
-    if (firstCard) firstCard.style.marginTop = (-overlap) + 'px';
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-});
-
-/* ===== FOLLOW TOGGLE ===== */
-function toggleFollow(type) {
-  const id = type==='ig' ? 'igFollowBox' : 'ttFollowBox';
-  const box = document.getElementById(id);
-  const active = box.dataset.checked === '1';
-  if (!active) {
-    box.dataset.checked = '1';
-    box.style.background = '#FFFCF0';
-    box.innerHTML = '<svg width="12" height="12" viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3" fill="none" stroke="#C9A827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  } else {
-    box.dataset.checked = '0';
-    box.style.background = '';
-    box.innerHTML = '';
-  }
-}
-
-/* ===== INSTAGRAM MODAL ===== */
-function openIgModal() {
-  const m = document.getElementById('igModal');
-  m.style.display = 'flex';
-}
-function closeIgModal() {
-  document.getElementById('igModal').style.display = 'none';
-}
-document.addEventListener('click', function(e) {
-  const m = document.getElementById('igModal');
-  if (m && e.target === m) closeIgModal();
-});
-
-/* ===== STEP PROGRAM LOGIC ===== */
-const programData = {
-  preschool: {
-    label: 'Preschool',
-    sub: 'Usia 3 – 7 Tahun',
-    programs: [
-      { value: 'Preschool - Calistung', label: 'Calistung', sub: 'Usia 3–7 Thn',
-        svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="7" y1="19" x2="13" y2="19"/></svg>' },
-      { value: 'Preschool - Thafidz', label: 'Thafidz', sub: 'Usia 3–7 Thn',
-        svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L4 7v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7L12 3z"/></svg>' },
-      { value: 'Preschool - English Kids', label: 'English Kids', sub: 'Usia 3–7 Thn',
-        svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
-    ]
-  },
-  elementary: {
-    label: 'Elementary',
-    sub: 'Usia 7 – 12 Tahun',
-    programs: [
-      { value: 'Elementary - Matematika', label: 'Matematika', sub: 'Usia 7–12 Thn',
-        svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="7" y1="19" x2="17" y2="19"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg>' },
-      { value: 'Elementary - Mata Pelajaran', label: 'Mata Pelajaran', sub: 'Elementary',
-        svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19h16"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>' },
-      { value: 'Elementary - Thafidz', label: 'Thafidz', sub: 'Elementary',
-        svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L4 7v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7L12 3z"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="12" y1="9" x2="12" y2="15"/></svg>' },
-      { value: 'Elementary - English', label: 'English', sub: 'Elementary',
-        svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
-    ]
-  }
-};
-
-let currentJenjang = null;
-
-const hideTimers = {};
-function showCard(id) {
-  const el = document.getElementById(id);
-  // Cancel any pending hide timer for this card
-  if (hideTimers[id]) { clearTimeout(hideTimers[id]); delete hideTimers[id]; }
-  el.style.display = 'block';
-  requestAnimationFrame(() => { el.style.opacity = '1'; });
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-function hideCard(id) {
-  const el = document.getElementById(id);
-  el.style.opacity = '0';
-  hideTimers[id] = setTimeout(() => { el.style.display = 'none'; delete hideTimers[id]; }, 280);
-}
-
-function selectJenjang(jenjang) {
-  currentJenjang = jenjang;
-  const data = programData[jenjang];
-
-  // Style jenjang buttons
-  ['preschool','elementary'].forEach(j => {
-    const btn = document.getElementById('btn-'+j);
-    if (j === jenjang) {
-      btn.style.borderColor = '#C9A827';
-      btn.style.background = '#FFFCF0';
-      btn.style.boxShadow = '0 0 0 1px #C9A827';
-    } else {
-      btn.style.borderColor = '#E0E0E0';
-      btn.style.background = '#FAFAFA';
-      btn.style.boxShadow = 'none';
-    }
-  });
-
-  // Build program grid
-  const grid = document.getElementById('program-grid');
-  document.getElementById('program-section-label').textContent = 'Program ' + data.label;
-  document.getElementById('program-section-sub').textContent = data.sub;
-
-  grid.innerHTML = data.programs.map(p =>
-    '<div class="img-radio-card" data-value="'+p.value+'" onclick="selectProgramCard(\'' + p.value + '\',this)">' +
-    '<input type="radio" name="program">' +
-    '<div class="check-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
-    '<div class="img-radio-img-placeholder">' + p.svg + '</div>' +
-    '<div class="img-radio-label">' + p.label + ' <span>' + p.sub + '</span></div>' +
-    '</div>'
-  ).join('');
-
-  // Reset program selection
-  radioValues['program'] = null;
-  radioValues['jenis'] = null;
-  currentTipe = null;
-  hideCard('card-tipe');
-  hideCard('card-reguler');
-  hideCard('card-private');
-  showCard('card-program');
-}
-
-function selectProgramCard(value, el) {
-  document.querySelectorAll('#program-grid .img-radio-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  radioValues['program'] = value;
-  const fEl = document.getElementById('f-program');
-  if (fEl) fEl.classList.remove('invalid');
-  updateProgress();
-  // Show tipe card (reguler/private chooser)
-  hideCard('card-reguler');
-  hideCard('card-private');
-  showCard('card-tipe');
-}
-
-let currentTipe = null;
-function selectTipe(tipe) {
-  currentTipe = tipe;
-  // Style tipe buttons
-  ['reguler','private'].forEach(t => {
-    const btn = document.getElementById('tipe-'+t+'-btn');
-    if (t === tipe) {
-      btn.style.borderColor = '#C9A827';
-      btn.style.background = '#FFFCF0';
-      btn.style.boxShadow = '0 0 0 1px #C9A827';
-    } else {
-      btn.style.borderColor = '#E0E0E0';
-      btn.style.background = '#FAFAFA';
-      btn.style.boxShadow = 'none';
-    }
-  });
-  radioValues['jenis'] = null;
-  document.querySelectorAll('#card-reguler .img-radio-card, #card-private .img-radio-card').forEach(c => c.classList.remove('selected'));
-  hideCard('card-reguler');
-  hideCard('card-private');
-  if (tipe === 'reguler') showCard('card-reguler');
-  else showCard('card-private');
-}
-
-function backToTipe() {
-  hideCard('card-reguler');
-  hideCard('card-private');
-  radioValues['jenis'] = null;
-  currentTipe = null;
-  document.querySelectorAll('#card-reguler .img-radio-card, #card-private .img-radio-card').forEach(c => c.classList.remove('selected'));
-  updateProgress();
-}
-
-function selectJenis(value, el) {
-  // Deselect all jenis cards across both cards
-  document.querySelectorAll('#card-reguler .img-radio-card, #card-private .img-radio-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  radioValues['jenis'] = value;
-  const fEl = document.getElementById('f-jenis');
-  if (fEl) fEl.classList.remove('invalid');
-  updateProgress();
-}
-
-function backToJenjang() {
-  hideCard('card-program');
-  hideCard('card-tipe');
-  hideCard('card-reguler');
-  hideCard('card-private');
-  radioValues['program'] = null;
-  radioValues['jenis'] = null;
-  currentJenjang = null;
-  currentTipe = null;
-  updateProgress();
-}
-
-function backToProgram() {
-  hideCard('card-tipe');
-  hideCard('card-reguler');
-  hideCard('card-private');
-  radioValues['jenis'] = null;
-  currentTipe = null;
-  document.querySelectorAll('#card-reguler .img-radio-card, #card-private .img-radio-card').forEach(c => c.classList.remove('selected'));
-  updateProgress();
-}
-
-/* ===== PROGRESS XP ===== */
-const requiredFields = ['namaLengkap','tempatLahir','tglLahir','anakKe','jmlSaudara','kelas','alamat','namaIbu','tglLahirWali','tempatLahirWali','waIbu','namaAyah','waAyah','kontakDarurat'];
-const requiredRadios = ['jk','sekolah','pkjIbu','pkjAyah','program','jenis'];
-const totalFields = requiredFields.length + requiredRadios.length;
-const xpMessages = [
-  [0,'Mulai isi formulir...'],
-  [20,'Bagus! Terus semangat'],
-  [40,'Lagi proses, hampir setengah!'],
-  [60,'Mantap! Lebih dari setengah jalan'],
-  [80,'Hampir selesai, tetap semangat!'],
-  [95,'Tinggal sedikit lagi!'],
-  [100,'Formulir lengkap! Siap daftar'],
-];
-
-// Card completion tracking for star popup
-const cardFields = {
-  'card-1': ['namaLengkap','tglLahir','anakKe','jmlSaudara','kelas','alamat'], // Data Peserta text fields
-  'card-2': ['namaIbu','tglLahirWali','tempatLahirWali','waIbu'],
-  'card-3': ['namaAyah','waAyah'],
-};
-const cardRadios = {
-  'card-1': ['jk','sekolah','tempatLahir'],
-  'card-2': ['pkjIbu'],
-  'card-3': ['pkjAyah'],
-};
-let cardDoneState = { 'card-1': false, 'card-2': false, 'card-3': false };
-
-function isCardComplete(key) {
-  const fields = cardFields[key] || [];
-  const radios = cardRadios[key] || [];
-  for (const id of fields) {
-    const el = document.getElementById(id);
-    if (!el || !el.value.trim()) return false;
-  }
-  for (const name of radios) {
-    if (name === 'tempatLahir') {
-      const el = document.getElementById('tempatLahir');
-      if (!el || !el.value) return false;
-    } else {
-      if (!radioValues[name]) return false;
-    }
-  }
-  return true;
-}
-
-function showStarPopup() {
-  const overlay = document.getElementById('starPopup');
-  overlay.style.display = 'flex';
-  const img = document.getElementById('starPopupImg');
-  const fb = document.getElementById('starPopupFallback');
-  const el = img.style.display === 'none' ? fb : img;
-  requestAnimationFrame(() => {
-    el.style.transform = 'translateY(0)';
-    el.style.opacity = '1';
-  });
-  setTimeout(() => {
-    el.style.transform = 'translateY(-40px)';
-    el.style.opacity = '0';
+  function goToForm() {
+    document.getElementById('scene').classList.add('exit');
     setTimeout(() => {
-      overlay.style.display = 'none';
-      el.style.transform = 'translateY(120px)';
-    }, 300);
-  }, 900);
-}
-
-function updateProgress() {
-  let filled = 0;
-  requiredFields.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.value.trim()) filled++;
-  });
-  requiredRadios.forEach(name => {
-    if (radioValues[name]) filled++;
-  });
-  const pct = Math.round((filled / totalFields) * 100);
-  const pctEl = document.getElementById('progressPct');
-  if (pctEl) pctEl.textContent = pct + '%';
-  const stars = document.getElementById('xpStars');
-  if (stars) {
-    stars.textContent = pct >= 100 ? 'LEVEL UP! 🔥' : pct >= 60 ? 'LEVEL 2' : pct >= 30 ? 'LEVEL 1' : '';
-  }
-  const status = document.getElementById('xpStatus');
-  if (status) {
-    let msg = xpMessages[0][1];
-    for (const [thresh, text] of xpMessages) { if (pct >= thresh) msg = text; }
-    status.textContent = msg;
+      window.location.href = 'index.html';
+    }, 500);
   }
 
-  // Check card completions for star popup
-  ['card-1','card-2','card-3'].forEach(key => {
-    const done = isCardComplete(key);
-    if (done && !cardDoneState[key]) {
-      cardDoneState[key] = true;
-      showStarPopup();
-    } else if (!done) {
-      cardDoneState[key] = false;
-    }
-  });
-}
+  // Touch swipe up detection
+  let touchStartY = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dy = touchStartY - e.changedTouches[0].clientY;
+    if (dy > 60) goToForm(); // swipe up 60px
+  }, { passive: true });
 
-// Attach input listeners
-requiredFields.forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', updateProgress);
-});
-
-/* ===== VALIDATE ===== */
-function validate() {
-  let ok = true;
-  const required = [
-    {id:'namaLengkap', field:'f-nama'},
-    {id:'tempatLahir', field:'f-ttl'},
-    {id:'tglLahir', field:'f-tgl'},
-    {id:'anakKe', field:'f-anak'},
-    {id:'jmlSaudara', field:'f-sdr'},
-    {id:'kelas', field:'f-kelas'},
-    {id:'alamat', field:'f-alamat'},
-    {id:'namaIbu', field:'f-namaIbu'},
-    {id:'tglLahirWali', field:'f-tglIbu'},
-    {id:'tempatLahirWali', field:'f-ttlIbu'},
-    {id:'waIbu', field:'f-waIbu'},
-    {id:'namaAyah', field:'f-namaAyah'},
-    {id:'waAyah', field:'f-waAyah'},
-    {id:'kontakDarurat', field:'f-kontakDarurat'},
-  ];
-  required.forEach(({id, field}) => {
-    const el = document.getElementById(id);
-    const fEl = document.getElementById(field);
-    if (!el || !el.value.trim()) { if(fEl) fEl.classList.add('invalid'); ok = false; }
-    else { if(fEl) fEl.classList.remove('invalid'); }
-  });
-  const radios = [
-    {name:'jk', field:'f-jk'},
-    {name:'sekolah', field:'f-sekolah'},
-    {name:'pkjIbu', field:'f-pkjIbu'},
-    {name:'pkjAyah', field:'f-pkjAyah'},
-    {name:'program', field:'f-program'},
-    {name:'jenis', field:'f-jenis'},
-  ];
-  radios.forEach(({name, field}) => {
-    const fEl = document.getElementById(field);
-    if (!radioValues[name]) { if(fEl) fEl.classList.add('invalid'); ok = false; }
-    else { if(fEl) fEl.classList.remove('invalid'); }
-  });
-  return ok;
-}
-
-function getSekolahValue() {
-  const v = radioValues['sekolah'];
-  if (v === '__other__') return document.getElementById('sekolahOther').value.trim() || '';
-  return v || '';
-}
-function getPkjIbuValue() {
-  const v = radioValues['pkjIbu'];
-  if (v === '__other__') return document.getElementById('pkjIbuOther').value.trim() || '';
-  return v || '';
-}
-function getPkjAyahValue() {
-  const v = radioValues['pkjAyah'];
-  if (v === '__other__') return document.getElementById('pkjAyahOther').value.trim() || '';
-  return v || '';
-}
-
-/* ===== LEARNING AGREEMENT MODAL ===== */
-let laScrolled = false;
-let laChecked = false;
-
-function openLA() {
-  const overlay = document.getElementById('laOverlay');
-  overlay.style.display = 'flex';
-  requestAnimationFrame(() => {
-    document.getElementById('laSheet').style.transform = 'translateY(0)';
-  });
-  document.body.style.overflow = 'hidden';
-
-  // Scroll sentinel
-  const scroll = document.getElementById('laScroll');
-  const sentinel = document.getElementById('laSentinel');
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && !laScrolled) {
-      laScrolled = true;
-      unlockCheck();
-    }
-  }, { root: scroll, threshold: 0.9 });
-  observer.observe(sentinel);
-}
-
-function closeLA() {
-  document.getElementById('laSheet').style.transform = 'translateY(100%)';
-  setTimeout(() => {
-    document.getElementById('laOverlay').style.display = 'none';
-    document.body.style.overflow = '';
-  }, 350);
-}
-
-function unlockCheck() {
-  const label = document.getElementById('laCheckLabel');
-  label.style.opacity = '1';
-  label.style.pointerEvents = 'auto';
-}
-
-// Checkbox toggle
-document.getElementById('laCheckLabel').addEventListener('click', function() {
-  if (!laScrolled) return;
-  laChecked = !laChecked;
-  const box = document.getElementById('laCheckBox');
-  const btn = document.getElementById('laAgreeBtn');
-  if (laChecked) {
-    box.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3" fill="none" stroke="#C9A827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    box.style.background = '#FFFCF0';
-    btn.disabled = false;
-    btn.style.background = '#1A1A1A';
-    btn.style.color = '#F3D465';
-    btn.style.cursor = 'pointer';
-  } else {
-    box.innerHTML = '';
-    box.style.background = '#fff';
-    btn.disabled = true;
-    btn.style.background = '#E0E0E0';
-    btn.style.color = '#9A9A9A';
-    btn.style.cursor = 'not-allowed';
-  }
-});
-
-// Click outside to close
-document.getElementById('laOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeLA();
-});
-
-/* ===== FORM SUBMIT → open LA ===== */
-document.getElementById('regForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  if (!validate()) {
-    document.querySelector('.field.invalid')?.scrollIntoView({behavior:'smooth', block:'center'});
-    return;
-  }
-  laScrolled = false;
-  laChecked = false;
-  document.getElementById('laCheckBox').innerHTML = '';
-  document.getElementById('laCheckBox').style.background = '#fff';
-  document.getElementById('laCheckLabel').style.opacity = '0.4';
-  document.getElementById('laCheckLabel').style.pointerEvents = 'none';
-  document.getElementById('laAgreeBtn').disabled = true;
-  document.getElementById('laAgreeBtn').style.background = '#E0E0E0';
-  document.getElementById('laAgreeBtn').style.color = '#9A9A9A';
-  document.getElementById('laScroll').scrollTop = 0;
-  openLA();
-});
-
-/* ===== SUBMIT AFTER AGREE ===== */
-async function submitAfterAgree() {
-  closeLA();
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading-spinner"></span>Mengirim...';
-
-  const FORM_ID = '1FAIpQLSflZQRG_hcAzGSbCj70w0do_dpTglE_Rff602ODScqgsYeEtg';
-  const URL = `https://docs.google.com/forms/u/0/d/e/${FORM_ID}/formResponse`;
-
-  const data = new FormData();
-  data.append('entry.1477599069', document.getElementById('namaLengkap').value.trim());
-  data.append('entry.1337713150', radioValues['jk'] || '');
-  data.append('entry.1404121608', document.getElementById('tempatLahir').value);
-  data.append('entry.37152362', document.getElementById('tglLahir').value);
-  data.append('entry.742263447', document.getElementById('anakKe').value);
-  data.append('entry.1101393286', document.getElementById('jmlSaudara').value);
-  data.append('entry.812047721', getSekolahValue());
-  data.append('entry.1059499898', document.getElementById('kelas').value);
-  data.append('entry.168964460', document.getElementById('alamat').value.trim());
-  data.append('entry.1455222930', document.getElementById('namaIbu').value.trim());
-  data.append('entry.829374909', document.getElementById('tglLahirWali').value);
-  data.append('entry.102773795', document.getElementById('tempatLahirWali').value);
-  data.append('entry.1451498221', getPkjIbuValue());
-  data.append('entry.1241854734', document.getElementById('waIbu').value.trim());
-  data.append('entry.514873794', document.getElementById('namaAyah').value.trim());
-  data.append('entry.1746480831', getPkjAyahValue());
-  data.append('entry.962884182', document.getElementById('waAyah').value.trim());
-  data.append('entry.1109362008', document.getElementById('emailAyah').value.trim());
-  data.append('entry.1733075027', document.getElementById('kontakDarurat').value.trim());
-  data.append('entry.641566729', document.getElementById('instagram').value.trim());
-  data.append('entry.229646615', document.getElementById('tiktok').value.trim());
-  data.append('entry.1636139426', radioValues['program'] || '');
-  data.append('entry.13159185', radioValues['jenis'] || '');
-
-  try {
-    await fetch(URL, {method:'POST', body:data, mode:'no-cors'});
-    showSplash();
-  } catch(err) {
-    btn.disabled = false;
-    btn.innerHTML = 'Daftar Sekarang';
-    alert('Terjadi kesalahan. Silakan coba lagi.');
-  }
-}
-
-/* ===== SPLASH ===== */
-function showSplash() {
-  document.getElementById('progressBubble').style.display = 'none';
-  const splash = document.getElementById('splashScreen');
-  splash.style.display = 'flex';
-  requestAnimationFrame(() => { splash.style.opacity = '1'; });
-  startConfetti();
-}
-
-function startConfetti() {
-  const canvas = document.getElementById('confettiCanvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const colors = ['#F3D465','#C9A827','#1A1A1A','#FFFFFF','#8A6F0E','#FFD700'];
-  const pieces = Array.from({length:90}, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * -canvas.height,
-    r: Math.random() * 7 + 4,
-    d: Math.random() * 80 + 20,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    tilt: Math.random() * 10 - 10,
-    tiltAngle: 0,
-    tiltSpeed: Math.random() * 0.07 + 0.05,
-    speed: Math.random() * 2.5 + 1.5,
-  }));
-
-  let frame = 0;
-  function draw() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach(p => {
-      p.tiltAngle += p.tiltSpeed;
-      p.y += p.speed;
-      p.x += Math.sin(frame * 0.01 + p.d) * 0.8;
-      p.tilt = Math.sin(p.tiltAngle) * 12;
-      if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
-      ctx.beginPath();
-      ctx.lineWidth = p.r;
-      ctx.strokeStyle = p.color;
-      ctx.moveTo(p.x + p.tilt + p.r/2, p.y);
-      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r/2);
-      ctx.stroke();
-    });
-    frame++;
-    if (frame < 260) requestAnimationFrame(draw);
-  }
-  draw();
-}
-
-/* ===== CSS ANIMATIONS (injected) ===== */
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes splashPop {
-    0%{transform:scale(0);opacity:0}
-    100%{transform:scale(1);opacity:1}
-  }
-  @keyframes splashFade {
-    0%{transform:translateY(16px);opacity:0}
-    100%{transform:translateY(0);opacity:1}
-  }
-  #splashScreen { opacity:0; transition:opacity 0.3s; }
-`;
-document.head.appendChild(style);
+  // Seamless cloud loop — fix image tiling
+  const layer = document.getElementById('clouds-layer');
+  const imgs = layer.querySelectorAll('img');
+  imgs[0].style.cssText = 'position:absolute;left:0;top:0;width:50%;height:100%;object-fit:cover;';
+  imgs[1].style.cssText = 'position:absolute;left:50%;top:0;width:50%;height:100%;object-fit:cover;';
 </script>
+
 </body>
 </html>
