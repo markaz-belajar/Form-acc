@@ -541,12 +541,13 @@ function onMove(y) {
   cta.style.transform = `translateX(-50%) translateY(${-dragDeltaY * 0.8}px)`;
   cta.style.opacity   = String(0.65 * (1 - p1));
 
+  // Class text fade out saat swipe
   const p2 = Math.min(dragDeltaY / (TRIGGER * 0.85), 1);
   classText.style.opacity   = String(1 - p2);
   classText.style.transform = `translateX(-50%) scale(${1 - p2 * 0.08})`;
 
-  const mf = Math.max(0, 1 - Math.max(0, dragDeltaY - TRIGGER * 0.4) / (TRIGGER * 0.7));
-  mascotWrap.style.opacity = String(mf);
+  // Maskot TIDAK memudar — hanya naik, opacity tetap penuh
+  mascotWrap.style.opacity = '1';
 
   if (dragDeltaY >= TRIGGER) goToForm();
 }
@@ -603,21 +604,25 @@ function goToForm() {
   isDragging = false;
 
   const fy = Math.sin(floatPhase) * FLOAT_AMP;
-  mascotWrap.style.transition = 'transform .55s cubic-bezier(.4,0,.2,1), opacity .45s ease';
-  mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(${fy - 460}px)`;
-  mascotWrap.style.opacity    = '0';
 
+  // Maskot terbang naik — TIDAK fade, opacity tetap 1
+  mascotWrap.style.transition = 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
+  mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(${fy - 500}px)`;
+  mascotWrap.style.opacity    = '1';
+
+  // CTA naik & fade
   cta.style.transition = 'transform .4s ease, opacity .35s ease';
   cta.style.transform  = 'translateX(-50%) translateY(-120px)';
   cta.style.opacity    = '0';
 
-  classText.style.transition = 'opacity .35s ease';
+  // Class of 2026 — fade out
+  classText.style.transition = 'opacity .4s ease';
   classText.style.opacity    = '0';
 
   setTimeout(() => {
     scene.classList.add('exit');
     setTimeout(() => { window.location.href = 'index.html'; }, 460);
-  }, 380);
+  }, 420);
 }
 
 
