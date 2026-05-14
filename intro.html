@@ -6,325 +6,296 @@
 <title>Markaz Belajar — Class of 2026</title>
 <style>
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background:#6ec6f5;}
+  #scene{position:fixed;inset:0;overflow:hidden;}
 
-  :root{
-    --sky1:#6ec6f5;
-    --sky2:#b8e4ff;
-    --sky3:#dff3ff;
+  /* ====== CLOUD SLIDESHOW ====== */
+  .cloud-frame{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center top;
+    opacity:0;transition:opacity 1.5s ease-in-out;z-index:1;
   }
+  .cloud-frame.active{opacity:1;}
 
-  html,body{
-    width:100%;height:100%;
-    overflow:hidden;
-    touch-action:pan-y;
-    font-family:'Segoe UI',sans-serif;
-  }
-
-  /* ===== SCENE ===== */
-  #scene{
-    position:fixed;
-    inset:0;
-    background:linear-gradient(180deg, #5bbde8 0%, #9dd9f7 40%, #c8ecff 75%, #e8f7ff 100%);
-    overflow:hidden;
-  }
-
-  /* ===== LAYER 1: PARALLAX CLOUDS BG ===== */
-  #clouds-layer{
-    position:absolute;
-    inset:0;
-    width:200%;          /* double wide untuk scroll */
-    height:100%;
-    z-index:1;
-    animation: cloudDrift 18s linear infinite;
-    will-change: transform;
-  }
-  #clouds-layer img{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    object-position:center;
-  }
-  @keyframes cloudDrift{
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* ===== LAYER 2: LOGO ===== */
+  /* ====== LOGO ====== */
   #logo{
-    position:absolute;
-    top:52px;
-    left:50%;
-    transform:translateX(-50%);
-    width:140px;
-    z-index:10;
-    opacity:0;
-    filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));
-    animation: logoIn 0.7s cubic-bezier(0.34,1.4,0.64,1) 0.4s forwards;
+    position:absolute;top:48px;left:50%;
+    transform:translateX(-50%);width:136px;z-index:10;opacity:0;
+    filter:drop-shadow(0 4px 16px rgba(0,0,0,0.20));
+    animation:logoIn 0.7s cubic-bezier(0.34,1.4,0.64,1) 0.5s forwards;
   }
   @keyframes logoIn{
-    0%  { opacity:0; transform:translateX(-50%) scale(0.7) translateY(-20px); }
-    100%{ opacity:1; transform:translateX(-50%) scale(1) translateY(0); }
+    0%  {opacity:0;transform:translateX(-50%) translateY(-24px) scale(0.75);}
+    100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
   }
 
-  /* ===== LAYER 3: CLASS OF 2026 TEXT ===== */
+  /* ====== CLASS OF 2026 ====== */
   #class-text{
-    position:absolute;
-    top:130px;
-    left:50%;
-    transform:translateX(-50%);
-    width:78%;
-    max-width:300px;
-    z-index:9;
-    opacity:0;
-    filter:drop-shadow(0 6px 20px rgba(0,0,0,0.25));
-    animation:
-      textIn 0.9s cubic-bezier(0.22,1.4,0.36,1) 1.0s forwards,
-      textFloat 4s ease-in-out 2.2s infinite;
+    position:absolute;top:118px;left:50%;
+    transform:translateX(-50%);width:80%;max-width:310px;
+    z-index:9;opacity:0;
+    filter:drop-shadow(0 6px 20px rgba(0,0,0,0.22));
+    animation:textIn 1.0s cubic-bezier(0.22,1.4,0.36,1) 1.1s forwards,
+              textFloat 4.2s ease-in-out 2.4s infinite;
   }
   @keyframes textIn{
-    0%  { opacity:0; transform:translateX(-50%) scale(0.5) rotate(-4deg); }
-    60% { opacity:1; transform:translateX(-50%) scale(1.06) rotate(1deg); }
-    100%{ opacity:1; transform:translateX(-50%) scale(1) rotate(0deg); }
+    0%  {opacity:0;transform:translateX(-50%) scale(0.5) rotate(-5deg);}
+    65% {opacity:1;transform:translateX(-50%) scale(1.07) rotate(1deg);}
+    100%{opacity:1;transform:translateX(-50%) scale(1) rotate(0deg);}
   }
   @keyframes textFloat{
-    0%,100%{ transform:translateX(-50%) translateY(0px) rotate(0deg); }
-    50%    { transform:translateX(-50%) translateY(-10px) rotate(0.5deg); }
+    0%,100%{transform:translateX(-50%) translateY(0px);}
+    50%    {transform:translateX(-50%) translateY(-11px);}
   }
+  /* Saat drag — non-active animasi float */
+  #class-text.dragging{animation:textIn 0s, none !important;}
 
-  /* ===== LAYER 4: MASKOT SOMA — flies in from bottom ===== */
+  /* ====== MASKOT SOMA ====== */
   #mascot{
-    position:absolute;
-    bottom:-20px;
-    right:-10px;
-    width:62%;
-    max-width:270px;
-    z-index:8;
-    opacity:0;
-    filter:drop-shadow(0 12px 28px rgba(0,0,0,0.18));
-    animation:
-      mascotFlyIn 1.1s cubic-bezier(0.22,1.3,0.36,1) 0.6s forwards,
-      mascotFloat 3.6s ease-in-out 2.0s infinite;
-    transform-origin: center bottom;
+    position:absolute;bottom:8%;left:50%;
+    transform:translateX(-50%) translateY(115%);
+    width:70%;max-width:295px;
+    z-index:8;opacity:0;
+    filter:drop-shadow(0 14px 30px rgba(0,0,0,0.15));
   }
-  @keyframes mascotFlyIn{
-    0%  { opacity:0; transform:translateY(120%) scale(0.8) rotate(6deg); }
-    60% { opacity:1; transform:translateY(-18px) scale(1.04) rotate(-2deg); }
-    80% { transform:translateY(6px) scale(0.98) rotate(0.5deg); }
-    100%{ opacity:1; transform:translateY(0px) scale(1) rotate(0deg); }
+  #mascot.rise{
+    transition:transform 2.6s cubic-bezier(0.20,0.85,0.36,1), opacity 1.2s ease;
+    opacity:1;transform:translateX(-50%) translateY(0);
   }
+  #mascot.float{animation:mascotFloat 3.8s ease-in-out infinite;}
   @keyframes mascotFloat{
-    0%,100%{ transform:translateY(0px) rotate(0deg); }
-    40%    { transform:translateY(-14px) rotate(-1deg); }
+    0%,100%{transform:translateX(-50%) translateY(0px) rotate(0deg);}
+    45%    {transform:translateX(-50%) translateY(-15px) rotate(-0.8deg);}
   }
 
-  /* ===== SWIPE UP CTA ===== */
-  #swipe-cta{
+  /* ====== BOTTOM GRADIENT PULL ====== */
+  /* Gradasi gelap di bawah, ikut naik saat drag */
+  #pull-gradient{
     position:absolute;
-    bottom:52px;
-    left:50%;
+    bottom:0;left:0;right:0;
+    height:260px;
+    background:linear-gradient(to top,
+      rgba(10,30,80,0.72) 0%,
+      rgba(10,30,80,0.38) 45%,
+      transparent 100%);
+    z-index:18;
+    transform:translateY(0);
+    transition:transform 0.08s linear;
+    pointer-events:none;
+  }
+
+  /* ====== SWIPE CTA ====== */
+  #swipe-cta{
+    position:absolute;bottom:38px;left:50%;
     transform:translateX(-50%);
-    z-index:20;
-    opacity:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    animation: ctaIn 0.8s ease 2.2s forwards;
-    cursor:pointer;
-    user-select:none;
-    -webkit-tap-highlight-color:transparent;
+    z-index:20;opacity:0;
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    animation:ctaIn 0.9s ease 2.6s forwards;
+    cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+    /* akan digerakkan via JS translateY */
+    will-change:transform;
   }
   @keyframes ctaIn{
-    0%  { opacity:0; transform:translateX(-50%) translateY(24px); }
-    100%{ opacity:1; transform:translateX(-50%) translateY(0); }
+    0%  {opacity:0;transform:translateX(-50%) translateY(20px);}
+    100%{opacity:1;transform:translateX(-50%) translateY(0);}
   }
 
-  /* Arrow group — 3 chevrons bouncing */
+  /* Bouncing arrows */
   .arrows{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:2px;
-    animation: arrowBounce 1.4s ease-in-out 2.8s infinite;
+    display:flex;flex-direction:column;align-items:center;gap:1px;
+    animation:arrowBounce 1.6s ease-in-out 3.0s infinite;
   }
   @keyframes arrowBounce{
-    0%,100%{ transform:translateY(0); }
-    50%    { transform:translateY(-8px); }
+    0%,100%{transform:translateY(0);}
+    50%    {transform:translateY(-9px);}
   }
-  .arrow-chevron{
-    width:32px;
-    height:16px;
-    opacity:0;
-    animation: chevronFade 1.4s ease-in-out infinite;
-  }
-  .arrow-chevron:nth-child(1){ animation-delay:2.8s; }
-  .arrow-chevron:nth-child(2){ animation-delay:3.0s; }
-  .arrow-chevron:nth-child(3){ animation-delay:3.2s; }
-  @keyframes chevronFade{
-    0%,100%{ opacity:0.2; }
-    50%    { opacity:1; }
-  }
-  .arrow-chevron svg polyline{
-    stroke:white;
-    stroke-width:3;
-    fill:none;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-    filter:drop-shadow(0 0 6px rgba(255,255,255,0.9));
+  /* saat drag — matikan bounce */
+  #swipe-cta.dragging .arrows{animation:none;}
+
+  .arr{display:block;width:38px;height:19px;}
+  .arr svg polyline{stroke:white;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  .arr:nth-child(1){opacity:0.28;}
+  .arr:nth-child(2){opacity:0.60;}
+  .arr:nth-child(3){opacity:1.00;}
+  .arr:nth-child(3) svg polyline{
+    filter:drop-shadow(0 0 7px rgba(255,255,255,1)) drop-shadow(0 0 14px rgba(130,230,255,0.9));
   }
 
-  /* Text "Swipe up" */
+  /* Swipe label — font tebal bergaya seperti semula */
   .swipe-label{
-    font-size:15px;
-    font-weight:800;
-    letter-spacing:2.5px;
-    text-transform:uppercase;
-    color:#ffffff;
+    font-size:15px;font-weight:800;letter-spacing:2.5px;
+    text-transform:uppercase;color:#fff;margin-top:3px;
+    font-family:'Segoe UI',system-ui,sans-serif;
     text-shadow:
       0 0 12px rgba(255,255,255,0.9),
       0 0 28px rgba(100,210,255,0.7),
       0 2px 6px rgba(0,0,0,0.25);
-    animation: labelPulse 2s ease-in-out 2.8s infinite;
+    animation:labelPulse 2.2s ease-in-out 3.0s infinite;
   }
   @keyframes labelPulse{
-    0%,100%{ text-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 28px rgba(100,210,255,0.7), 0 2px 6px rgba(0,0,0,0.25); }
-    50%    { text-shadow: 0 0 22px rgba(255,255,255,1),   0 0 50px rgba(100,210,255,1),   0 2px 6px rgba(0,0,0,0.25); }
+    0%,100%{opacity:0.85;}
+    50%    {opacity:1;text-shadow:0 0 20px rgba(255,255,255,1),0 0 48px rgba(100,210,255,1),0 2px 6px rgba(0,0,0,0.25);}
+  }
+  #swipe-cta.dragging .swipe-label{animation:none;opacity:1;}
+
+  /* ====== SPARKLES ====== */
+  .sp{position:absolute;pointer-events:none;z-index:15;opacity:0;animation:spk 2.8s ease-in-out infinite;}
+  @keyframes spk{
+    0%,100%{opacity:0;transform:scale(0.4) rotate(0deg);}
+    50%    {opacity:0.8;transform:scale(1) rotate(180deg);}
   }
 
-  /* Glow ring around swipe area */
-  .swipe-glow{
-    position:absolute;
-    bottom:36px;
-    left:50%;
-    transform:translateX(-50%);
-    width:180px;
-    height:60px;
-    border-radius:99px;
-    border:1.5px solid rgba(255,255,255,0.4);
-    box-shadow:
-      0 0 18px rgba(100,220,255,0.35),
-      inset 0 0 18px rgba(255,255,255,0.08);
-    animation: glowPulse 2s ease-in-out 2.8s infinite;
-    pointer-events:none;
-    z-index:19;
-    opacity:0;
-    animation: ctaIn 0.8s ease 2.4s forwards, glowPulse 2s ease-in-out 3.2s infinite;
-  }
-  @keyframes glowPulse{
-    0%,100%{ box-shadow:0 0 18px rgba(100,220,255,0.35), inset 0 0 18px rgba(255,255,255,0.08); }
-    50%    { box-shadow:0 0 38px rgba(100,220,255,0.65), inset 0 0 28px rgba(255,255,255,0.14); }
-  }
-
-  /* ===== TRANSITION OUT ===== */
-  #scene.exit{
-    animation: sceneExit 0.55s cubic-bezier(0.4,0,0.6,1) forwards;
-  }
-  @keyframes sceneExit{
-    0%  { opacity:1; transform:scale(1); }
-    100%{ opacity:0; transform:scale(1.06); }
-  }
-
-  /* Sparkle particles */
-  .sparkle{
-    position:absolute;
-    pointer-events:none;
-    z-index:15;
-    opacity:0;
-    animation: sparklePop 2.5s ease-in-out infinite;
-  }
-  @keyframes sparklePop{
-    0%,100%{ opacity:0; transform:scale(0.5) rotate(0deg); }
-    50%    { opacity:0.85; transform:scale(1) rotate(180deg); }
+  /* ====== EXIT ====== */
+  #scene.exit{animation:exitAnim 0.45s cubic-bezier(0.4,0,0.6,1) forwards;}
+  @keyframes exitAnim{
+    0%  {opacity:1;transform:scale(1);}
+    100%{opacity:0;transform:scale(1.06);}
   }
 </style>
 </head>
 <body>
-
 <div id="scene">
 
-  <!-- Layer 1: Clouds parallax (double-wide background) -->
-  <div id="clouds-layer">
-    <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_1.png" alt="">
-    <!-- Mirror copy untuk seamless loop -->
-    <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_1.png" alt="" style="position:absolute;left:50%;top:0;width:50%;height:100%;object-fit:cover;">
-  </div>
+  <!-- 4 frame cloud BG -->
+  <img class="cloud-frame active" src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.1.png" alt="">
+  <img class="cloud-frame"        src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.2.png" alt="">
+  <img class="cloud-frame"        src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.3.png" alt="">
+  <img class="cloud-frame"        src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.4.png" alt="">
 
-  <!-- Sparkle stars -->
-  <div class="sparkle" style="top:18%;left:8%;animation-delay:0.5s;">
-    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white" opacity="0.9"/></svg>
-  </div>
-  <div class="sparkle" style="top:12%;right:14%;animation-delay:1.2s;">
-    <svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white" opacity="0.85"/></svg>
-  </div>
-  <div class="sparkle" style="top:28%;left:18%;animation-delay:2.1s;">
-    <svg width="10" height="10" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white" opacity="0.7"/></svg>
-  </div>
-  <div class="sparkle" style="top:22%;right:28%;animation-delay:0.8s;">
-    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="rgba(255,240,150,0.9)"/></svg>
-  </div>
+  <!-- Sparkles -->
+  <div class="sp" style="top:17%;left:7%;animation-delay:0.4s;"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white"/></svg></div>
+  <div class="sp" style="top:11%;right:13%;animation-delay:1.3s;"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white"/></svg></div>
+  <div class="sp" style="top:32%;left:14%;animation-delay:2.0s;"><svg width="9" height="9" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="white" opacity="0.7"/></svg></div>
+  <div class="sp" style="top:22%;right:25%;animation-delay:0.9s;"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5z" fill="rgba(255,240,140,0.95)"/></svg></div>
 
-  <!-- Layer 4: Logo (top center) -->
-  <img id="logo"
-    src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png"
-    alt="Markaz Belajar">
+  <!-- Logo -->
+  <img id="logo" src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png" alt="Markaz Belajar">
 
-  <!-- Layer 3: Class of 2026 text (center) -->
-  <img id="class-text"
-    src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png"
-    alt="Class of 2026 Preschool & Elementary">
+  <!-- Class of 2026 -->
+  <img id="class-text" src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png" alt="Class of 2026">
 
-  <!-- Layer 2: Maskot Soma (flies up from bottom right) -->
-  <img id="mascot"
-    src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png"
-    alt="Maskot Soma">
+  <!-- Maskot -->
+  <img id="mascot" src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png" alt="Maskot Soma">
 
-  <!-- Glow ring -->
-  <div class="swipe-glow"></div>
+  <!-- Bottom gradient yang ikut naik -->
+  <div id="pull-gradient"></div>
 
-  <!-- Swipe Up CTA -->
-  <div id="swipe-cta" onclick="goToForm()">
+  <!-- Swipe CTA -->
+  <div id="swipe-cta" id="swipe-cta">
     <div class="arrows">
-      <div class="arrow-chevron">
-        <svg viewBox="0 0 32 16"><polyline points="4,12 16,4 28,12"/></svg>
-      </div>
-      <div class="arrow-chevron">
-        <svg viewBox="0 0 32 16"><polyline points="4,12 16,4 28,12"/></svg>
-      </div>
-      <div class="arrow-chevron">
-        <svg viewBox="0 0 32 16"><polyline points="4,12 16,4 28,12"/></svg>
-      </div>
+      <div class="arr"><svg viewBox="0 0 38 19"><polyline points="4,15 19,4 34,15"/></svg></div>
+      <div class="arr"><svg viewBox="0 0 38 19"><polyline points="4,15 19,4 34,15"/></svg></div>
+      <div class="arr"><svg viewBox="0 0 38 19"><polyline points="4,15 19,4 34,15"/></svg></div>
     </div>
     <div class="swipe-label">Swipe up !</div>
   </div>
 
 </div>
-
 <script>
-  function goToForm() {
-    document.getElementById('scene').classList.add('exit');
+  // ===== CLOUD SLIDESHOW =====
+  const frames = document.querySelectorAll('.cloud-frame');
+  let cur = 0;
+  setInterval(() => {
+    frames[cur].classList.remove('active');
+    cur = (cur + 1) % frames.length;
+    frames[cur].classList.add('active');
+  }, 8000);
+
+  // ===== MASKOT RISE =====
+  const mascot = document.getElementById('mascot');
+  setTimeout(() => {
+    mascot.classList.add('rise');
     setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 500);
+      mascot.style.transition = 'none';
+      mascot.style.transform  = 'translateX(-50%) translateY(0)';
+      void mascot.offsetHeight;
+      mascot.classList.remove('rise');
+      mascot.classList.add('float');
+    }, 2700);
+  }, 800);
+
+  // ===== SWIPE INTERACTION =====
+  const cta       = document.getElementById('swipe-cta');
+  const gradient  = document.getElementById('pull-gradient');
+  const classText = document.getElementById('class-text');
+
+  let ty0 = 0, isDragging = false, dragY = 0;
+  const MAX_PULL = 220; // px max sebelum trigger
+  const TRIGGER  = 110; // px untuk pindah halaman
+
+  function onStart(y) {
+    ty0 = y;
+    isDragging = true;
+    cta.classList.add('dragging');
+    classText.classList.add('dragging');
+    cta.style.transition = 'none';
+    gradient.style.transition = 'none';
+    classText.style.transition = 'transform 0.08s linear';
   }
 
-  // Touch swipe up detection
-  let touchStartY = 0;
-  document.addEventListener('touchstart', e => {
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  document.addEventListener('touchend', e => {
-    const dy = touchStartY - e.changedTouches[0].clientY;
-    if (dy > 60) goToForm(); // swipe up 60px
-  }, { passive: true });
+  function onMove(y) {
+    if (!isDragging) return;
+    dragY = Math.max(0, Math.min(ty0 - y, MAX_PULL)); // hanya naik
 
-  // Seamless cloud loop — fix image tiling
-  const layer = document.getElementById('clouds-layer');
-  const imgs = layer.querySelectorAll('img');
-  imgs[0].style.cssText = 'position:absolute;left:0;top:0;width:50%;height:100%;object-fit:cover;';
-  imgs[1].style.cssText = 'position:absolute;left:50%;top:0;width:50%;height:100%;object-fit:cover;';
+    // CTA naik mengikuti jari
+    cta.style.transform = `translateX(-50%) translateY(${-dragY}px)`;
+
+    // Gradient naik + makin terang sesuai drag
+    const gradProgress = dragY / MAX_PULL;
+    gradient.style.transform  = `translateY(${-dragY * 0.6}px)`;
+    gradient.style.opacity    = 0.6 + gradProgress * 0.4;
+
+    // Class text naik sedikit (parallax lebih lambat)
+    classText.style.transform = `translateX(-50%) translateY(${-dragY * 0.18}px)`;
+
+    // Jika cukup jauh → trigger
+    if (dragY >= TRIGGER) goToForm();
+  }
+
+  function onEnd(y) {
+    if (!isDragging) return;
+    isDragging = false;
+    const finalDragY = Math.max(0, Math.min(ty0 - y, MAX_PULL));
+
+    if (finalDragY >= TRIGGER) { goToForm(); return; }
+
+    // Snap kembali
+    cta.style.transition      = 'transform 0.4s cubic-bezier(0.34,1.3,0.64,1)';
+    gradient.style.transition  = 'transform 0.4s ease, opacity 0.4s ease';
+    classText.style.transition = 'transform 0.4s cubic-bezier(0.34,1.1,0.64,1)';
+
+    cta.style.transform       = 'translateX(-50%) translateY(0)';
+    gradient.style.transform  = 'translateY(0)';
+    gradient.style.opacity    = '1';
+    classText.style.transform = 'translateX(-50%) translateY(0)';
+
+    setTimeout(() => {
+      cta.classList.remove('dragging');
+      classText.classList.remove('dragging');
+      cta.style.transition       = '';
+      gradient.style.transition  = '';
+      classText.style.transition = '';
+    }, 420);
+  }
+
+  // Touch
+  document.addEventListener('touchstart', e => onStart(e.touches[0].clientY), {passive:true});
+  document.addEventListener('touchmove',  e => onMove(e.touches[0].clientY),  {passive:true});
+  document.addEventListener('touchend',   e => onEnd(e.changedTouches[0].clientY), {passive:true});
+
+  // Mouse (untuk testing di desktop)
+  document.addEventListener('mousedown',  e => onStart(e.clientY));
+  document.addEventListener('mousemove',  e => { if(isDragging) onMove(e.clientY); });
+  document.addEventListener('mouseup',    e => onEnd(e.clientY));
+
+  // Click CTA langsung
+  cta.addEventListener('click', () => { if(dragY < 10) goToForm(); });
+
+  function goToForm() {
+    isDragging = false;
+    document.getElementById('scene').classList.add('exit');
+    setTimeout(() => { window.location.href = 'index.html'; }, 460);
+  }
 </script>
-
 </body>
 </html>
