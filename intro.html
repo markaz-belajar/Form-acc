@@ -9,8 +9,8 @@
   html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background:#6ec6f5;}
   #scene{position:fixed;inset:0;overflow:hidden;}
 
-  /* ====== BG SLIDE — CSS animation, tidak perlu JS ====== */
-  /* Strip 4 frame lebar 400vw, dianimasikan geser ke kiri (frame 1→2→3→4→loop) */
+  /* ====== BG STRIP — HANYA dikontrol JS (CSS animation dihapus total) ====== */
+  /* Fix #1: hapus CSS @keyframes bgSlide agar tidak bentrok dengan JS tickBg */
   #bg-strip{
     position:absolute;
     top:0;left:0;
@@ -18,11 +18,8 @@
     height:100%;
     display:flex;
     z-index:1;
-    animation: bgSlide 32s linear infinite;
-  }
-  @keyframes bgSlide {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-75%); } /* geser 3/4 strip = 3×100vw */
+    will-change:transform;
+    /* TIDAK ada animation CSS di sini — semua dihandle JS */
   }
   #bg-strip img{
     width:25%;
@@ -46,8 +43,8 @@
 
   /* ====== CLASS OF 2026 ====== */
   #class-text{
-    position:absolute;top:118px;left:50%;
-    transform:translateX(-50%);width:80%;max-width:310px;
+    position:absolute;top:110px;left:50%;
+    transform:translateX(-50%);width:86%;max-width:360px;
     z-index:9;opacity:0;
     filter:drop-shadow(0 6px 20px rgba(0,0,0,0.22));
     animation:textIn 1.0s cubic-bezier(0.22,1.4,0.36,1) 1.1s forwards;
@@ -57,16 +54,16 @@
     65% {opacity:1;transform:translateX(-50%) scale(1.07) rotate(1deg);}
     100%{opacity:1;transform:translateX(-50%) scale(1) rotate(0deg);}
   }
-  /* float dikontrol JS sepenuhnya setelah animIn selesai */
 
-  /* ====== MASKOT ====== */
+  /* ====== MASKOT — Fix #2: lebih besar agar balon tidak terpotong ====== */
   #mascot-wrap{
     position:absolute;
-    bottom:8%;left:50%;
-    width:70%;max-width:295px;
+    /* Turunkan posisi bottom sedikit agar ada ruang lebih ke atas */
+    bottom:-2%;left:50%;
+    /* Fix #2: perbesar dari 70%/295px menjadi 88%/420px */
+    width:88%;max-width:420px;
     z-index:8;
     will-change:transform;
-    /* posisi awal & transform diatur JS */
   }
   #mascot-wrap img{
     width:100%;
@@ -76,12 +73,17 @@
   }
   #mascot-wrap img.visible{ opacity:1; }
 
-  /* ====== BOTTOM GRADIENT ====== */
+  /* ====== BOTTOM GRADIENT — Fix #3: lebih tinggi & lebih halus ====== */
+  /* Gradient diperluas dan diperlembut agar tidak ada garis tegas saat swipe */
   #pull-gradient{
-    position:absolute;bottom:0;left:0;right:0;height:260px;
+    position:absolute;bottom:0;left:0;right:0;
+    /* Fix #3: tinggi dari 260px → 380px, dan gradient lebih panjang transisinya */
+    height:380px;
     background:linear-gradient(to top,
-      rgba(10,30,80,0.72) 0%,
-      rgba(10,30,80,0.38) 45%,
+      rgba(10,30,80,0.70) 0%,
+      rgba(10,30,80,0.40) 30%,
+      rgba(10,30,80,0.18) 58%,
+      rgba(10,30,80,0.05) 78%,
       transparent 100%);
     z-index:18;pointer-events:none;
     will-change:transform,opacity;
@@ -182,31 +184,64 @@
 </div>
 <script>
 // ============================================================
-// BG SLIDE — pan KIRI ke KANAN (frame 1 → 2 → 3 → 4 → loop)
-// Caranya: mulai dari frame terakhir (translateX = -3*VW),
-// geser ke kanan (+) sampai 0, lalu lompat ke -3*VW lagi.
+// Fix #1: BG SLIDE — HANYA pakai JS, CSS animation dihapus.
+// Sistem: strip lebar 4×VW. Kita scroll ke kiri (bgX negatif).
+// Saat bgX mencapai -(VW * 3), ada duplicate frame 1 di posisi 4
+// tapi karena loop mulus kita reset ke -VW*0 langsung tidak terasa.
+//
+// Teknik seamless: kita clone frame pertama dan tempel di akhir (total 5 frame = 500%),
+// sehingga saat frame ke-4 habis, frame ke-5 (= clone frame-1) tampil mulus,
+// lalu kita reset posisi ke 0 tanpa visual glitch.
 // ============================================================
 const strip = document.getElementById('bg-strip');
-const VW    = window.innerWidth;
 
-// Mulai dari frame pertama (bgX = 0), gerak ke kanan artinya
-// frame berikutnya masuk dari kanan → kita geser strip ke KIRI secara negatif
-// tapi "slide ke kanan" artinya tampilan bergerak ke kanan →
-// strip bergerak ke KIRI (translateX negatif bertambah besar)
-// TAPI Elis ingin transisi ke kanan: frame 1→2→3→4 berurutan
-// Artinya konten bergeser ke kanan, strip bergerak ke KANAN (translateX positif bertambah)
-// Kita mulai dari posisi -(3*VW) dan gerak menuju 0, lalu reset ke -(3*VW)
+// Clone frame pertama dan append ke strip untuk seamless loop
+const firstImg = strip.children[0];
+const cloneImg = firstImg.cloneNode(true);
+strip.appendChild(cloneImg);
+// Sekarang strip punya 5 gambar → lebar 500%
+strip.style.width = '500%';
 
-let bgX = -(VW * 3);   // mulai dari frame 4 (paling kanan)
-const BG_SPEED = 0.18; // px per frame
+const VW = window.innerWidth;
+let bgX = 0;
+const BG_SPEED = 0.22; // px per frame → gerak ke kiri
 
 function tickBg() {
-  bgX += BG_SPEED; // gerak ke kanan (konten slide kanan)
-  if (bgX >= 0) bgX = -(VW * 3); // loop: setelah frame 1 tampil penuh, balik ke frame 4
+  bgX -= BG_SPEED; // geser ke kiri
+  // Saat sudah geser 4 frame penuh (= 4 × VW), reset ke 0 (seamless karena frame ke-5 = frame ke-1)
+  if (bgX <= -(VW * 4)) bgX = 0;
   strip.style.transform = `translateX(${bgX}px)`;
   requestAnimationFrame(tickBg);
 }
 requestAnimationFrame(tickBg);
+
+// ============================================================
+// Fix #4: Android back button — reset scene saat pageshow
+// Ketika user back dari halaman berikutnya, browser bisa restore
+// page dari bfcache dalam kondisi "exit". Reset semua state di sini.
+// ============================================================
+window.addEventListener('pageshow', function(e) {
+  // e.persisted = true berarti dari bfcache (Android back button)
+  if (e.persisted) {
+    const scene = document.getElementById('scene');
+    // Hapus class exit dan reset opacity/transform
+    scene.classList.remove('exit');
+    scene.style.animation = 'none';
+    scene.style.opacity   = '1';
+    scene.style.transform = 'scale(1)';
+    // Reset state drag
+    isDragging = false;
+    dragDeltaY = 0;
+    // Reset elemen yang mungkin bergeser
+    cta.style.transition      = 'none';
+    cta.style.transform       = 'translateX(-50%) translateY(0)';
+    gradient.style.transition = 'none';
+    gradient.style.transform  = 'translateY(0)';
+    gradient.style.opacity    = '1';
+    classText.style.opacity   = '1';
+    classText.style.transform = 'translateX(-50%) scale(1) rotate(0deg)';
+  }
+});
 
 // ============================================================
 // STATE
@@ -217,64 +252,55 @@ const classText   = document.getElementById('class-text');
 const cta         = document.getElementById('swipe-cta');
 const gradient    = document.getElementById('pull-gradient');
 
-let mascotReady   = false;   // true setelah rise selesai
+let mascotReady   = false;
 let isDragging    = false;
 let dragStartY    = 0;
-let dragDeltaY    = 0;       // berapa px maskot naik saat drag (0 = tidak naik)
+let dragDeltaY    = 0;
 
 // Levitasi (float)
 let floatPhase    = 0;
 let floatActive   = true;
-const FLOAT_AMP   = 14;   // ±14px
+const FLOAT_AMP   = 14;
 const FLOAT_SPEED = 0.018;
 
-// rAF loop utama
 let rafId = null;
 
 // ============================================================
-// RISE MASKOT — muncul dari bawah lalu levitasi terus
+// RISE MASKOT
 // ============================================================
-// Posisi awal: di bawah layar
 mascotWrap.style.transform = 'translateX(-50%) translateY(115%)';
 
 setTimeout(() => {
   mascotImg.classList.add('visible');
-  // Rise ke posisi normal (translateY 0 = posisi CSS bottom:8%)
   mascotWrap.style.transition = 'transform 2.6s cubic-bezier(0.20,0.85,0.36,1)';
   mascotWrap.style.transform  = 'translateX(-50%) translateY(0px)';
 
   setTimeout(() => {
-    // Rise selesai — ambil alih dengan rAF, matikan CSS transition
     mascotWrap.style.transition = 'none';
     mascotReady = true;
     startMainLoop();
   }, 2700);
 }, 800);
 
-// Class-text float — aktif setelah animasi CSS selesai, dikontrol JS
 let classTextReady = false;
-let classFloatPhase = Math.PI; // offset beda fase dari maskot
+let classFloatPhase = Math.PI;
 setTimeout(() => { classTextReady = true; }, 2200);
 
 // ============================================================
-// MAIN LOOP — float maskot + float class-text (kalau tidak di-drag)
+// MAIN LOOP
 // ============================================================
 function startMainLoop() {
   if (rafId) return;
   function loop() {
     floatPhase      += FLOAT_SPEED;
-    classFloatPhase += FLOAT_SPEED * 0.85; // sedikit beda speed biar organik
+    classFloatPhase += FLOAT_SPEED * 0.85;
 
     const floatY = Math.sin(floatPhase) * FLOAT_AMP;
 
     if (!isDragging) {
-      // Maskot levitasi normal
-      const totalY = floatY;
-      mascotWrap.style.transform = `translateX(-50%) translateY(${totalY}px)`;
+      mascotWrap.style.transform = `translateX(-50%) translateY(${floatY}px)`;
     }
-    // Kalau sedang drag, posisi maskot dikontrol oleh onMove
 
-    // Class-text float (hanya kalau tidak di-drag & tidak sedang fade-out oleh drag)
     if (classTextReady && !isDragging) {
       const ctY = Math.sin(classFloatPhase) * 10;
       classText.style.transform = `translateX(-50%) translateY(${ctY}px) scale(1) rotate(0deg)`;
@@ -286,7 +312,7 @@ function startMainLoop() {
 }
 
 // ============================================================
-// DRAG INTERACTION — 1:1 dengan jari
+// DRAG INTERACTION
 // ============================================================
 const MAX_DRAG = 260;
 const TRIGGER  = 140;
@@ -301,22 +327,20 @@ function onStart(y) {
 function onMove(y) {
   if (!isDragging) return;
 
-  const raw = dragStartY - y; // positif = jari naik
+  const raw = dragStartY - y;
   dragDeltaY = Math.max(0, Math.min(raw, MAX_DRAG));
 
-  // Maskot ikut jari 1:1 (di atas posisi levitasi saat ini)
   const floatY = Math.sin(floatPhase) * FLOAT_AMP;
   mascotWrap.style.transform = `translateX(-50%) translateY(${floatY - dragDeltaY}px)`;
 
-  // CTA naik
   cta.style.transform = `translateX(-50%) translateY(${-dragDeltaY}px)`;
 
-  // Gradient naik + lebih gelap
+  // Fix #3: gradient tidak langsung naik terlihat sebagai garis —
+  // gunakan parallax lebih halus (0.35 bukan 0.55) dan opacity lebih smooth
   const p = dragDeltaY / MAX_DRAG;
-  gradient.style.transform = `translateY(${-dragDeltaY * 0.55}px)`;
-  gradient.style.opacity   = String(0.55 + p * 0.45);
+  gradient.style.transform = `translateY(${-dragDeltaY * 0.35}px)`;
+  gradient.style.opacity   = String(0.6 + p * 0.40);
 
-  // Class-text fade out & scale down seiring drag
   const progress = Math.min(dragDeltaY / (TRIGGER * 0.85), 1);
   const opacity  = 1 - progress;
   const scale    = 1 - progress * 0.08;
@@ -333,30 +357,26 @@ function onEnd(_y) {
 
   if (dragDeltaY >= TRIGGER) { goToForm(); return; }
 
-  // Snap kembali — CTA dan gradient dengan CSS transition
   cta.style.transition      = 'transform 0.45s cubic-bezier(0.34,1.3,0.64,1)';
   gradient.style.transition = 'transform 0.45s ease, opacity 0.45s ease';
   cta.style.transform       = 'translateX(-50%) translateY(0)';
   gradient.style.transform  = 'translateY(0)';
   gradient.style.opacity    = '1';
 
-  // Maskot snap dengan spring manual (rAF)
   const snapFrom = dragDeltaY;
   const snapDur  = 450;
   const snapT0   = performance.now();
 
   function snapMascot(now) {
     const t    = Math.min((now - snapT0) / snapDur, 1);
-    const ease = 1 - Math.pow(1 - t, 3); // ease out cubic
+    const ease = 1 - Math.pow(1 - t, 3);
     const remaining = snapFrom * (1 - ease);
     const floatY = Math.sin(floatPhase) * FLOAT_AMP;
     mascotWrap.style.transform = `translateX(-50%) translateY(${floatY - remaining}px)`;
     if (t < 1) requestAnimationFrame(snapMascot);
-    // setelah snap selesai, loop utama ambil alih kembali
   }
   requestAnimationFrame(snapMascot);
 
-  // Class-text fade KEMBALI
   const fromOpacity = parseFloat(classText.style.opacity) || 0;
   const fadeDur     = 400;
   const fadeT0      = performance.now();
@@ -369,7 +389,6 @@ function onEnd(_y) {
     classText.style.opacity   = String(op);
     classText.style.transform = `translateX(-50%) scale(${sc}) rotate(0deg)`;
     if (t < 1) requestAnimationFrame(fadeClassBack);
-    // setelah selesai, loop utama ambil alih float lagi
   }
   requestAnimationFrame(fadeClassBack);
 
@@ -392,7 +411,8 @@ cta.addEventListener('click', () => { if (dragDeltaY < 10) goToForm(); });
 
 function goToForm() {
   isDragging = false;
-  document.getElementById('scene').classList.add('exit');
+  const scene = document.getElementById('scene');
+  scene.classList.add('exit');
   setTimeout(() => { window.location.href = 'index.html'; }, 460);
 }
 </script>
