@@ -6,7 +6,23 @@
 <title>Markaz Belajar — Class of 2026</title>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background:#5ab8ec;}
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  touch-action:none;background:#5ab8ec;
+  /* Blokir seleksi teks di seluruh halaman */
+  -webkit-user-select:none;-moz-user-select:none;user-select:none;
+  /* Blokir callout (long-press bubble) di iOS/Android */
+  -webkit-touch-callout:none;
+}
+/* Blokir drag & context menu pada semua gambar */
+img{
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;
+  pointer-events:none;      /* gambar tidak bisa di-tap/long-press langsung */
+  -webkit-user-drag:none;
+  user-drag:none;
+  draggable:false;
+}
 
 /* ══════════════════════════════════════════════
    LOADING SCREEN
@@ -141,8 +157,9 @@ html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background:#5
   bottom:-2%;left:50%;
   width:75%;max-width:310px;
   z-index:8;
-  /* Mulai dari bawah layar — JS yang naik-kan */
   transform:translateX(-35%) translateY(120%);
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;user-select:none;
 }
 #mascot-wrap img{width:100%;display:block;
   filter:drop-shadow(0 14px 30px rgba(0,0,0,.15));}
@@ -203,7 +220,7 @@ html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background:#5
 <div id="loading-screen">
   <img id="loading-logo"
     src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png"
-    alt="Markaz Belajar" crossorigin="anonymous"
+    alt="Markaz Belajar" crossorigin="anonymous" draggable="false" oncontextmenu="return false"
     onload="this.classList.add('loaded')">
   <div id="loading-dots">
     <div class="dot"></div>
@@ -232,16 +249,16 @@ html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background:#5
   <!-- Semua img pakai data-src supaya tidak load duluan -->
   <img id="logo"
     data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png"
-    alt="Markaz Belajar">
+    alt="Markaz Belajar" draggable="false" oncontextmenu="return false">
 
   <img id="class-text"
     data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png"
-    alt="Class of 2026">
+    alt="Class of 2026" draggable="false" oncontextmenu="return false">
 
   <div id="mascot-wrap">
     <img id="mascot-img"
       data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png"
-      alt="Maskot">
+      alt="Maskot" draggable="false" oncontextmenu="return false">
   </div>
 
   <div id="swipe-cta">
@@ -602,6 +619,17 @@ function goToForm() {
     setTimeout(() => { window.location.href = 'index.html'; }, 460);
   }, 380);
 }
+
+
+// ════════════════════════════════════════════════════════════
+// BLOKIR LONG-PRESS / CONTEXT MENU / IMAGE SAVE
+// ════════════════════════════════════════════════════════════
+// Blokir klik kanan & long-press context menu di semua browser
+document.addEventListener('contextmenu', e => e.preventDefault());
+// Blokir seleksi teks lewat touch
+document.addEventListener('selectstart', e => e.preventDefault());
+// Blokir drag gambar
+document.addEventListener('dragstart',   e => e.preventDefault());
 
 
 // ════════════════════════════════════════════════════════════
