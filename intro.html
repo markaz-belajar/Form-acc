@@ -493,7 +493,6 @@ let musicStarted = false;
 function startMusic() {
   if (!MUSIC_URL) return;
 
-  // Pakai blob URL yang sudah di-buffer saat preload
   const src = audioBlobUrl || MUSIC_URL;
   audioEl = new Audio(src);
   audioEl.loop   = true;
@@ -503,7 +502,7 @@ function startMusic() {
   const savedTime = parseFloat(sessionStorage.getItem(MUSIC_KEY_TIME) || '0');
   if (savedTime > 0) audioEl.currentTime = savedTime;
 
-  // Simpan posisi tiap detik
+  // Simpan posisi tiap update
   audioEl.addEventListener('timeupdate', () => {
     sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
     sessionStorage.setItem(MUSIC_KEY_PLAY, '1');
@@ -513,7 +512,7 @@ function startMusic() {
     if (musicStarted) return;
     audioEl.play().then(() => {
       musicStarted = true;
-      // Fade in volume perlahan
+      // Fade in volume
       let vol = 0;
       const fadeIn = setInterval(() => {
         vol = Math.min(vol + 0.04, 0.8);
@@ -523,9 +522,13 @@ function startMusic() {
     }).catch(() => {});
   }
 
-  tryPlay();
+  // ── Kunci utama: dengarkan touch PERTAMA di mana saja ──────
+  // Loading screen sudah tampil → user pasti menyentuh layar
+  // (menunggu, mengetuk, dll) → itu sudah cukup sebagai interaksi
   document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
   document.addEventListener('mousedown',  tryPlay, { once: true });
+  // Coba juga langsung (berhasil di beberapa browser/kondisi)
+  tryPlay();
 }
 
 function pauseMusicForNav() {
@@ -587,9 +590,6 @@ function reveal() {
   }, 500);
 
   setTimeout(() => { cfReady = true; }, 1600);
-
-  // 8. Mulai musik
-  startMusic();
 }
 
 
@@ -771,8 +771,12 @@ document.addEventListener('dragstart',   e => e.preventDefault());
 
 
 // ════════════════════════════════════════════════════════════
-// KICK OFF — langsung preload semua, scene tidak tampil dulu
+// KICK OFF
+// 1. Siapkan audio SEKARANG — dengarkan touch pertama di mana saja
+// 2. Preload semua aset di background
+// 3. Setelah selesai → reveal scene
 // ════════════════════════════════════════════════════════════
+startMusic();      // ← pasang listener touch sejak loading screen tampil
 preloadAll(reveal);
 </script>
 </body>
