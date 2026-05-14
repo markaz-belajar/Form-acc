@@ -32,67 +32,80 @@
     font-size:16px;
     -webkit-text-size-adjust:100%;
   }
+  /* ===== HERO 4-LAYER ===== */
   .hero{
     position:relative;
-    background-image: url('images/hero-markaz.jpg'); /* Ganti path sesuai repo */
-    background-size:cover;
-    background-position:center top;
-    background-color:#C9A827; /* fallback jika gambar belum ada */
-    padding:48px 20px 72px;
-    text-align:center;
+    width:100%;
+    height:334px;
     overflow:hidden;
-    min-height:180px;
+    background:#87CEEB;
+    flex-shrink:0;
   }
-  .hero::before{
-    content:'';
+  /* Layer 1 — Background awan & balon (static) */
+  .hero-bg{
     position:absolute;
     inset:0;
-    background:linear-gradient(
-      to bottom,
-      rgba(0,0,0,0.35) 0%,
-      rgba(0,0,0,0.15) 50%,
-      rgba(0,0,0,0.45) 100%
-    );
-    z-index:0;
-  }
-  .hero > *{
-    position:relative;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center top;
     z-index:1;
   }
+  /* Layer 4 — Logo Markaz Belajar (tengah atas, static) */
   .hero-logo{
-    width:72px;
-    height:72px;
+    position:absolute;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:140px;
     object-fit:contain;
-    border-radius:50%;
-    margin:0 auto 16px;
-    display:block;
-    background:rgba(255,255,255,0.15);
-    padding:6px;
-    border:2px solid rgba(255,255,255,0.3);
+    z-index:4;
+    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.18));
   }
-  .brand{
-    font-family:'Fraunces',serif;
-    font-size:11px;
-    font-weight:300;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:rgba(255,255,255,0.75);
-    margin-bottom:8px;
+  /* Layer 2 — Text "Class of 2026" (animasi float lambat) */
+  .hero-text{
+    position:absolute;
+    bottom:54px;
+    left:12px;
+    width:58%;
+    object-fit:contain;
+    z-index:2;
+    filter:drop-shadow(0 4px 12px rgba(0,0,0,0.22));
+    animation: floatText 4s ease-in-out infinite;
+    transform-origin: center bottom;
   }
-  .title{
-    font-family:'Fraunces',serif;
-    font-size:28px;
-    font-weight:600;
-    color:#FFFFFF;
-    line-height:1.2;
-    margin-bottom:6px;
-    text-shadow:0 2px 12px rgba(0,0,0,0.3);
+  /* Layer 3 — Maskot Soma (animasi float berbeda phase) */
+  .hero-mascot{
+    position:absolute;
+    bottom:0px;
+    right:-8px;
+    width:52%;
+    object-fit:contain;
+    z-index:3;
+    filter:drop-shadow(0 6px 18px rgba(0,0,0,0.20));
+    animation: floatMascot 3.6s ease-in-out infinite;
+    transform-origin: center bottom;
   }
-  .subtitle{
-    font-size:13px;
-    color:rgba(255,255,255,0.75);
-    font-weight:400;
-    margin-bottom:0;
+  /* Animasi naik turun pelan — beda phase biar natural */
+  @keyframes floatText {
+    0%   { transform: translateY(0px) rotate(0deg); }
+    50%  { transform: translateY(-9px) rotate(0.4deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+  }
+  @keyframes floatMascot {
+    0%   { transform: translateY(0px) rotate(0deg); }
+    40%  { transform: translateY(-11px) rotate(-0.5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+  }
+  /* Bottom fade agar menyatu dengan card di bawahnya */
+  .hero::after{
+    content:'';
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:80px;
+    background:linear-gradient(to bottom, transparent, rgba(243,212,101,0.55));
+    z-index:5;
+    pointer-events:none;
   }
   .card{
     background:var(--white);
@@ -425,7 +438,14 @@
 <body>
 
 <div class="hero">
-  <img src="images/logo-markaz.png" alt="Markaz Belajar" class="hero-logo">
+  <!-- Layer 1: Background awan + balon -->
+  <img src="images/bag_1.png" alt="" class="hero-bg">
+  <!-- Layer 4: Logo Markaz Belajar (tengah atas) -->
+  <img src="images/MARKAZ_BELAJAR_LOGO.png" alt="Markaz Belajar" class="hero-logo">
+  <!-- Layer 2: Text Class of 2026 (float animasi) -->
+  <img src="images/bag_2.png" alt="Class of 2026 Preschool & Elementary" class="hero-text">
+  <!-- Layer 3: Maskot Soma (float animasi, phase beda) -->
+  <img src="images/bag_3.png" alt="Maskot Soma" class="hero-mascot">
 </div>
 
 <p class="form-subtitle">Isi formulir dengan lengkap dan benar</p>
