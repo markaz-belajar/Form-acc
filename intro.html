@@ -158,14 +158,9 @@ img{
 #class-text{
   position:absolute;top:110px;left:50%;
   width:86%;max-width:360px;z-index:9;
+  /* opacity awal 0, animasi dikontrol JS setelah reveal */
   opacity:0;
   filter:drop-shadow(0 6px 20px rgba(0,0,0,.22));
-  animation:textIn 1s cubic-bezier(.22,1.4,.36,1) .6s both;
-}
-@keyframes textIn{
-  0%  {opacity:0;transform:translateX(-50%) scale(.5) rotate(-5deg);}
-  65% {opacity:1;transform:translateX(-50%) scale(1.07) rotate(1deg);}
-  100%{opacity:1;transform:translateX(-50%) scale(1) rotate(0);}
 }
 
 
@@ -325,25 +320,29 @@ const logoEl        = document.getElementById('logo');
 const cta           = document.getElementById('swipe-cta');
 
 // ════════════════════════════════════════════════════════════
-// PRELOADER
-// Semua aset di-download ke imageCache.
+// PRELOADER — gambar + audio sekaligus
 // Baru setelah 100% selesai → reveal() dipanggil.
 // ════════════════════════════════════════════════════════════
 const imageCache = {};
+let   audioBlobUrl = null; // blob URL audio yang sudah di-buffer
 
 function preloadAll(onDone) {
-  let remaining = ALL_URLS.length;
-  if (remaining === 0) { onDone(); return; }
+  let remaining = ALL_URLS.length + 1; // +1 untuk audio
+  function tick() { if (--remaining === 0) onDone(); }
 
+  // Preload semua gambar
   ALL_URLS.forEach(url => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.onload = img.onerror = () => {
-      imageCache[url] = img;
-      if (--remaining === 0) onDone();
-    };
-    img.src = url;   // download di background, tapi elemen scene belum pakai ini
+    img.onload = img.onerror = () => { imageCache[url] = img; tick(); };
+    img.src = url;
   });
+
+  // Preload audio via fetch → blob supaya tidak ada delay/skip saat play
+  fetch(MUSIC_URL)
+    .then(r => r.blob())
+    .then(blob => { audioBlobUrl = URL.createObjectURL(blob); tick(); })
+    .catch(() => { audioBlobUrl = MUSIC_URL; tick(); }); // fallback: langsung URL
 }
 
 
@@ -440,8 +439,106 @@ function mainLoop() {
 
 
 // ════════════════════════════════════════════════════════════
-// THEME COLOR — status bar Android ikut warna scene
+// ANIMASI CLASS TEXT — JS driven (bukan CSS animation)
+// Supaya JS bisa override opacity saat swipe tanpa konflik
 // ════════════════════════════════════════════════════════════
+function animateClassText() {
+  const dur = 900; // ms
+  const t0  = performance.now();
+  // reset posisi awal
+  classText.style.transition = 'none';
+  classText.style.opacity    = '0';
+  classText.style.transform  = 'translateX(-50%) scale(0.5) rotate(-5deg)';
+
+  (function step(now) {
+    if (triggered) return; // jangan ganggu kalau sudah swipe
+    const t  = Math.min((now - t0) / dur, 1);
+    // easing bounce
+    let scale, rot, op;
+    if (t < 0.65) {
+      const p = t / 0.65;
+      scale = 0.5  + p * 0.6;        // 0.5 → 1.1
+      rot   = -5   + p * 6;           // -5deg → +1deg
+      op    = p;
+    } else {
+      const p = (t - 0.65) / 0.35;
+      scale = 1.1  - p * 0.1;         // 1.1 → 1.0
+      rot   =  1   - p * 1;           // +1deg → 0
+      op    = 1;
+    }
+    classText.style.opacity   = String(op);
+    classText.style.transform = `translateX(-50%) scale(${scale}) rotate(${rot}deg)`;
+    if (t < 1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
+
+// ════════════════════════════════════════════════════════════
+// MUSIK LINTAS HALAMAN
+//
+// Cara kerja:
+// - intro.html mulai memutar musik, simpan currentTime ke sessionStorage
+//   setiap detik (dan saat goToForm)
+// - index.html membaca sessionStorage, lanjutkan dari posisi tersebut
+// - Pakai <audio> biasa dengan autoplay setelah user touch pertama
+//   (browser modern blokir autoplay tanpa interaksi user)
+// ════════════════════════════════════════════════════════════
+const MUSIC_URL      = 'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/intro.music.mp3';
+const MUSIC_KEY_TIME = 'mb_music_time';
+const MUSIC_KEY_PLAY = 'mb_music_playing';
+
+let audioEl = null;
+let musicStarted = false;
+
+function startMusic() {
+  if (!MUSIC_URL) return;
+
+  // Pakai blob URL yang sudah di-buffer saat preload
+  const src = audioBlobUrl || MUSIC_URL;
+  audioEl = new Audio(src);
+  audioEl.loop   = true;
+  audioEl.volume = 0;
+
+  // Lanjutkan dari posisi tersimpan (kalau balik dari index)
+  const savedTime = parseFloat(sessionStorage.getItem(MUSIC_KEY_TIME) || '0');
+  if (savedTime > 0) audioEl.currentTime = savedTime;
+
+  // Simpan posisi tiap detik
+  audioEl.addEventListener('timeupdate', () => {
+    sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
+    sessionStorage.setItem(MUSIC_KEY_PLAY, '1');
+  });
+
+  function tryPlay() {
+    if (musicStarted) return;
+    audioEl.play().then(() => {
+      musicStarted = true;
+      // Fade in volume perlahan
+      let vol = 0;
+      const fadeIn = setInterval(() => {
+        vol = Math.min(vol + 0.04, 0.8);
+        audioEl.volume = vol;
+        if (vol >= 0.8) clearInterval(fadeIn);
+      }, 80);
+    }).catch(() => {});
+  }
+
+  tryPlay();
+  document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
+  document.addEventListener('mousedown',  tryPlay, { once: true });
+}
+
+function pauseMusicForNav() {
+  if (!audioEl) return;
+  // Simpan waktu terakhir sebelum pindah halaman
+  sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
+  sessionStorage.setItem(MUSIC_KEY_PLAY, '1');
+  // JANGAN pause — biarkan audio terus, halaman baru yang ambil alih
+  // (browser akan stop otomatis saat navigasi, tapi waktu sudah tersimpan)
+}
+
+
+
 function setThemeColor(color) {
   let meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', color);
@@ -452,16 +549,13 @@ function setThemeColor(color) {
 // REVEAL — dipanggil tepat setelah semua aset selesai load
 // ════════════════════════════════════════════════════════════
 function reveal() {
-  // 1. Pasang src dari cache ke elemen HTML (gambar sudah ada di memori)
-  //    → tidak ada request jaringan baru, langsung render
+  // 1. Pasang src dari cache ke elemen HTML
   logoEl.src    = imageCache[SCENE_URLS[0]].src;
   classText.src = imageCache[SCENE_URLS[1]].src;
   mascotImg.src = imageCache[SCENE_URLS[2]].src;
 
   // 2. Bangun BG strip
   resizeBg();
-
-  // Update theme-color ke warna langit saat scene tampil
   setThemeColor('#6ec6f5');
 
   // 3. Mulai loop animasi
@@ -474,22 +568,28 @@ function reveal() {
   // 5. Tampilkan scene
   scene.classList.add('show');
 
-  // 6. Rise maskot setelah scene terlihat
+  // 6. Animasi class text (JS-driven agar bisa di-override saat swipe)
+  //    Delay 0.6s, bounce dari kecil ke normal
+  setTimeout(() => {
+    animateClassText();
+  }, 600);
+
+  // 7. Rise maskot
   setTimeout(() => {
     mascotWrap.style.transition = 'transform 2.2s cubic-bezier(0.20,0.85,0.36,1)';
     mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(0px)`;
-
     setTimeout(() => {
       mascotWrap.style.transition = '';
       mascotReady = true;
-
-      // Tampilkan CTA
       cta.style.transition = 'opacity 0.7s ease';
       cta.style.opacity    = '0.65';
     }, 2300);
   }, 500);
 
   setTimeout(() => { cfReady = true; }, 1600);
+
+  // 8. Mulai musik
+  startMusic();
 }
 
 
@@ -652,6 +752,7 @@ function goToForm() {
   classText.style.opacity    = '0';
 
   setTimeout(() => {
+    pauseMusicForNav();
     scene.classList.add('exit');
     setTimeout(() => { window.location.href = 'index.html'; }, 460);
   }, 420);
