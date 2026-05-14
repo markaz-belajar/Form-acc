@@ -97,25 +97,17 @@
     40%  { transform: translateY(-11px) rotate(-0.5deg); }
     100% { transform: translateY(0px) rotate(0deg); }
   }
-  /* Bottom fade agar menyatu dengan card di bawahnya */
-  .hero::after{
-    content:'';
-    position:absolute;
-    bottom:0;left:0;right:0;
-    height:80px;
-    background:linear-gradient(to bottom, transparent, rgba(243,212,101,0.55));
-    z-index:5;
-    pointer-events:none;
-  }
+  /* No bottom fade */
   .card{
     background:var(--white);
-    border-radius:var(--radius);
+    border-radius:28px;
     padding:28px 24px;
     margin:0 16px 16px;
     box-shadow:var(--card-shadow);
+    border: 6px solid #48a9e0;
   }
   .card:first-of-type{
-    margin-top:-36px;
+    margin-top:-72px;
     position:relative;
     z-index:2;
   }
@@ -447,8 +439,6 @@
   <!-- Layer 3: Maskot Soma (float animasi, phase beda) -->
   <img src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png" alt="Maskot Soma" class="hero-mascot">
 </div>
-
-<p class="form-subtitle">Isi formulir dengan lengkap dan benar</p>
 
 <form id="regForm">
 
