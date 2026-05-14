@@ -2,17 +2,37 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<!-- viewport-fit=cover: konten memenuhi seluruh layar termasuk area status bar & nav bar -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Markaz Belajar — Class of 2026</title>
+
+<!-- Status bar Android Chrome ikut warna langit -->
+<meta name="theme-color" content="#6ec6f5">
+<!-- iOS Safari status bar transparan (konten extends ke bawah status bar) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- PWA fullscreen mode -->
+<meta name="mobile-web-app-capable" content="yes">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{
+html{
+  /* Background meluas ke seluruh layar termasuk area status bar & nav bar */
+  background:#5ab8ec;
+  /* Tinggi 100% termasuk area safe (notch, status bar, nav bar) */
+  height:100%;
+}
+body{
   width:100%;height:100%;overflow:hidden;
   touch-action:none;background:#5ab8ec;
   /* Blokir seleksi teks di seluruh halaman */
   -webkit-user-select:none;-moz-user-select:none;user-select:none;
   /* Blokir callout (long-press bubble) di iOS/Android */
   -webkit-touch-callout:none;
+  /* Konten mengisi area penuh termasuk di bawah status bar & nav bar */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 /* Blokir drag & context menu pada semua gambar */
 img{
@@ -420,6 +440,15 @@ function mainLoop() {
 
 
 // ════════════════════════════════════════════════════════════
+// THEME COLOR — status bar Android ikut warna scene
+// ════════════════════════════════════════════════════════════
+function setThemeColor(color) {
+  let meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', color);
+}
+
+
+// ════════════════════════════════════════════════════════════
 // REVEAL — dipanggil tepat setelah semua aset selesai load
 // ════════════════════════════════════════════════════════════
 function reveal() {
@@ -431,6 +460,9 @@ function reveal() {
 
   // 2. Bangun BG strip
   resizeBg();
+
+  // Update theme-color ke warna langit saat scene tampil
+  setThemeColor('#6ec6f5');
 
   // 3. Mulai loop animasi
   requestAnimationFrame(mainLoop);
