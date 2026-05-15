@@ -2,11 +2,24 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pendaftaran Angkatan Belajar 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
+  *{box-sizing:border-box;margin:0;padding:0;
+    -webkit-user-select:none;-moz-user-select:none;user-select:none;
+    -webkit-touch-callout:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* Input & textarea tetap bisa dipilih (untuk mengetik) */
+  input,textarea,select{
+    -webkit-user-select:text;-moz-user-select:text;user-select:text;
+  }
+  img{
+    -webkit-user-drag:none;user-drag:none;
+    pointer-events:none;
+    draggable:false;
+  }
   :root{
     --gold:#F3D465;
     --gold-dark:#C9A827;
@@ -1817,6 +1830,23 @@ document.head.appendChild(style);
   document.addEventListener('touchstart', play, {once:true, passive:true});
   document.addEventListener('mousedown',  play, {once:true});
 })();
+
+// ── BLOKIR ZOOM & SELEKSI ────────────────────────────────────
+// Blokir context menu (long-press save gambar dll)
+document.addEventListener('contextmenu', e => e.preventDefault());
+// Blokir seleksi teks via drag
+document.addEventListener('selectstart', e => {
+  if (!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) e.preventDefault();
+});
+// Blokir drag gambar
+document.addEventListener('dragstart', e => e.preventDefault());
+// Blokir double-tap zoom (tanpa mengganggu scroll)
+let lastTap = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTap < 300) e.preventDefault(); // double-tap
+  lastTap = now;
+}, {passive: false});
 </script>
 </body>
 </html>
