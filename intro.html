@@ -309,31 +309,53 @@ function animateClassText() {
   })(performance.now());
 }
 
-// Audio: load lazy, tidak blocking scene
+// Audio: src di-set SEGERA agar browser bisa buffer,
+// play() dipanggil di dalam user gesture (touchstart/mousedown).
 let audioEl = null, musicStarted = false;
 function startMusic() {
   if (!MUSIC_URL) return;
   audioEl = new Audio();
-  audioEl.loop = true;
-  audioEl.volume = 0;
-  audioEl.preload = 'none'; // jangan autoload, kita minta manual
+  audioEl.loop    = true;
+  audioEl.volume  = 0;
+  audioEl.preload = 'auto'; // mulai buffer sekarang
+
+  // Set src SEKARANG (bukan di dalam handler) agar browser
+  // punya cukup data saat play() dipanggil
+  audioEl.src = MUSIC_URL;
+
+  // Restore posisi setelah metadata siap (bukan langsung)
   const savedTime = parseFloat(sessionStorage.getItem(MUSIC_KEY_TIME) || '0');
+  if (savedTime > 0) {
+    audioEl.addEventListener('canplay', () => {
+      try { audioEl.currentTime = savedTime; } catch(e) {}
+    }, {once: true});
+  }
+
   audioEl.addEventListener('timeupdate', () => {
     sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
   });
+
   function tryPlay() {
     if (musicStarted) return;
-    audioEl.src = MUSIC_URL; // baru set src setelah ada interaksi
-    if (savedTime > 0) audioEl.currentTime = savedTime;
-    audioEl.play().then(() => {
-      musicStarted = true;
-      let vol = 0;
-      const fi = setInterval(() => {
-        vol = Math.min(vol + 0.04, 0.8);
-        audioEl.volume = vol;
-        if (vol >= 0.8) clearInterval(fi);
-      }, 80);
-    }).catch(() => {});
+    musicStarted = true;
+    // play() dipanggil langsung di dalam gesture handler → izin autoplay terpenuhi
+    const p = audioEl.play();
+    if (p && p.then) {
+      p.then(() => {
+        // Fade in volume
+        let vol = 0;
+        const fi = setInterval(() => {
+          vol = Math.min(vol + 0.04, 0.8);
+          audioEl.volume = vol;
+          if (vol >= 0.8) clearInterval(fi);
+        }, 80);
+      }).catch(() => {
+        // Autoplay diblokir browser → coba lagi di interaksi berikutnya
+        musicStarted = false;
+        document.addEventListener('touchstart', tryPlay, {once:true, passive:true});
+        document.addEventListener('mousedown',  tryPlay, {once:true});
+      });
+    }
   }
   document.addEventListener('touchstart', tryPlay, {once:true, passive:true});
   document.addEventListener('mousedown',  tryPlay, {once:true});
@@ -457,7 +479,10 @@ function goToForm() {
   cta.style.opacity = '0';
   classText.style.transition = 'opacity .4s ease';
   classText.style.opacity = '0';
-  if (audioEl) sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
+  if (audioEl) {
+    sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
+    sessionStorage.setItem('mb_music_playing', '1'); // sinyal ke index.html agar musik lanjut
+  }
   setTimeout(() => {
     scene.classList.add('exit');
     setTimeout(() => { window.location.href = 'index.html'; }, 460);
