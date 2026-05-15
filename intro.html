@@ -188,6 +188,7 @@ img{
 <script>
 'use strict';
 
+// ── URL ASET ────────────────────────────────────────────────
 const BG_URLS = [
   'https://cdn.jsdelivr.net/gh/markaz-belajar/Form-acc@main/beg_1.1.png',
   'https://cdn.jsdelivr.net/gh/markaz-belajar/Form-acc@main/beg_1.2.png',
@@ -201,10 +202,7 @@ const SCENE_URLS = [
 ];
 const ALL_URLS = [...BG_URLS, ...SCENE_URLS];
 
-// PERBAIKAN: audio URL terpisah, TIDAK masuk preloader
-const MUSIC_URL = 'https://cdn.jsdelivr.net/gh/markaz-belajar/Form-acc@main/intro.music.mp3';
-const MUSIC_KEY_TIME = 'mb_music_time';
-
+// ── ELEMEN ───────────────────────────────────────────────────
 const loadingScreen = document.getElementById('loading-screen');
 const scene         = document.getElementById('scene');
 const bgCanvas      = document.getElementById('bg-canvas');
@@ -215,9 +213,8 @@ const classText     = document.getElementById('class-text');
 const logoEl        = document.getElementById('logo');
 const cta           = document.getElementById('swipe-cta');
 
+// ── PRELOAD GAMBAR SAJA (tidak ada audio di sini) ────────────
 const imageCache = {};
-
-// ── PERBAIKAN UTAMA: preloadAll hanya tunggu GAMBAR, bukan audio ──
 function preloadAll(onDone) {
   let remaining = ALL_URLS.length;
   if (remaining === 0) { onDone(); return; }
@@ -226,12 +223,12 @@ function preloadAll(onDone) {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload  = () => { imageCache[url] = img; tick(); };
-    img.onerror = () => { imageCache[url] = img; tick(); }; // tetap lanjut walau error
+    img.onerror = () => { imageCache[url] = img; tick(); };
     img.src = url;
   });
 }
 
-// ── Audio load TERPISAH, tidak blocking ──
+// ── BACKGROUND CANVAS (seamless scroll) ─────────────────────
 const BG_SPEED = 0.55;
 let bgStrip = null, stripW = 0, bgOffset = 0;
 
@@ -240,17 +237,17 @@ function buildStrip() {
   const imgs = BG_URLS.map(u => imageCache[u]).filter(img => img && img.naturalWidth);
   if (!imgs.length) return;
   const widths = imgs.map(img => Math.round((img.naturalWidth / img.naturalHeight) * H));
-  stripW = widths.reduce((a,b) => a+b, 0);
+  stripW = widths.reduce((a, b) => a + b, 0);
   const oc = document.createElement('canvas');
   oc.width = stripW; oc.height = H;
   const c2 = oc.getContext('2d');
   let x = 0;
-  imgs.forEach((img,i) => { c2.drawImage(img,x,0,widths[i],H); x+=widths[i]; });
+  imgs.forEach((img, i) => { c2.drawImage(img, x, 0, widths[i], H); x += widths[i]; });
   bgStrip = oc; bgOffset = 0;
 }
 
 function resizeBg() {
-  bgCanvas.width = window.innerWidth;
+  bgCanvas.width  = window.innerWidth;
   bgCanvas.height = window.innerHeight;
   buildStrip();
 }
@@ -258,13 +255,14 @@ window.addEventListener('resize', resizeBg);
 
 function drawBg() {
   const W = bgCanvas.width, H = bgCanvas.height;
-  if (!bgStrip || stripW === 0) { bgCtx.fillStyle='#5ab8ec'; bgCtx.fillRect(0,0,W,H); return; }
+  if (!bgStrip || stripW === 0) { bgCtx.fillStyle = '#5ab8ec'; bgCtx.fillRect(0, 0, W, H); return; }
   bgOffset = ((bgOffset % stripW) + stripW) % stripW;
   bgCtx.drawImage(bgStrip, -bgOffset,          0, stripW, H);
   bgCtx.drawImage(bgStrip, -bgOffset + stripW,  0, stripW, H);
   bgOffset += BG_SPEED;
 }
 
+// ── FLOAT ANIMATION ──────────────────────────────────────────
 const MASCOT_BASE_X = '-35%';
 const FLOAT_AMP = 14, FLOAT_SPEED = 0.018;
 let floatPhase = 0, cfPhase = Math.PI;
@@ -290,77 +288,39 @@ function mainLoop() {
 function animateClassText() {
   const dur = 900, t0 = performance.now();
   classText.style.transition = 'none';
-  classText.style.opacity = '0';
-  classText.style.transform = 'translateX(-50%) scale(0.5) rotate(-5deg)';
+  classText.style.opacity    = '0';
+  classText.style.transform  = 'translateX(-50%) scale(0.5) rotate(-5deg)';
   (function step(now) {
     if (triggered) return;
     const t = Math.min((now - t0) / dur, 1);
     let scale, rot, op;
     if (t < 0.65) {
       const p = t / 0.65;
-      scale = 0.5 + p*0.6; rot = -5 + p*6; op = p;
+      scale = 0.5 + p * 0.6; rot = -5 + p * 6; op = p;
     } else {
       const p = (t - 0.65) / 0.35;
-      scale = 1.1 - p*0.1; rot = 1 - p*1; op = 1;
+      scale = 1.1 - p * 0.1; rot = 1 - p; op = 1;
     }
-    classText.style.opacity = String(op);
+    classText.style.opacity   = String(op);
     classText.style.transform = `translateX(-50%) scale(${scale}) rotate(${rot}deg)`;
     if (t < 1) requestAnimationFrame(step);
   })(performance.now());
 }
 
-// Audio: src di-set SEGERA agar browser bisa buffer,
-// play() dipanggil di dalam user gesture (touchstart/mousedown).
-let audioEl = null, musicStarted = false;
-function startMusic() {
-  if (!MUSIC_URL) return;
-  audioEl = new Audio();
-  audioEl.loop    = true;
-  audioEl.volume  = 0;
-  audioEl.preload = 'auto'; // mulai buffer sekarang
-
-  // Set src SEKARANG (bukan di dalam handler) agar browser
-  // punya cukup data saat play() dipanggil
-  audioEl.src = MUSIC_URL;
-
-  // Restore posisi setelah metadata siap (bukan langsung)
-  const savedTime = parseFloat(sessionStorage.getItem(MUSIC_KEY_TIME) || '0');
-  if (savedTime > 0) {
-    audioEl.addEventListener('canplay', () => {
-      try { audioEl.currentTime = savedTime; } catch(e) {}
-    }, {once: true});
-  }
-
-  audioEl.addEventListener('timeupdate', () => {
-    sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
-  });
-
-  function tryPlay() {
-    if (musicStarted) return;
-    musicStarted = true;
-    // play() dipanggil langsung di dalam gesture handler → izin autoplay terpenuhi
-    const p = audioEl.play();
-    if (p && p.then) {
-      p.then(() => {
-        // Fade in volume
-        let vol = 0;
-        const fi = setInterval(() => {
-          vol = Math.min(vol + 0.04, 0.8);
-          audioEl.volume = vol;
-          if (vol >= 0.8) clearInterval(fi);
-        }, 80);
-      }).catch(() => {
-        // Autoplay diblokir browser → coba lagi di interaksi berikutnya
-        musicStarted = false;
-        document.addEventListener('touchstart', tryPlay, {once:true, passive:true});
-        document.addEventListener('mousedown',  tryPlay, {once:true});
-      });
-    }
-  }
-  document.addEventListener('touchstart', tryPlay, {once:true, passive:true});
-  document.addEventListener('mousedown',  tryPlay, {once:true});
+// ── GESTURE RECORDER (untuk unlock autoplay di index.html) ───
+// Intro TIDAK memutar musik sama sekali.
+// Saat user pertama kali menyentuh layar, kita catat di sessionStorage.
+// index.html akan membaca flag ini dan langsung play() dari awal — mulus tanpa patah.
+let gestureRecorded = false;
+function recordGesture() {
+  if (gestureRecorded) return;
+  gestureRecorded = true;
+  sessionStorage.setItem('mb_music_ready', '1');
 }
+document.addEventListener('touchstart', recordGesture, {passive: true});
+document.addEventListener('mousedown',  recordGesture);
 
+// ── REVEAL SCENE ─────────────────────────────────────────────
 function reveal() {
   logoEl.src    = imageCache[SCENE_URLS[0]]?.src || SCENE_URLS[0];
   classText.src = imageCache[SCENE_URLS[1]]?.src || SCENE_URLS[1];
@@ -382,13 +342,14 @@ function reveal() {
       mascotWrap.style.transition = '';
       mascotReady = true;
       cta.style.transition = 'opacity 0.7s ease';
-      cta.style.opacity = '0.65';
+      cta.style.opacity    = '0.65';
     }, 2300);
   }, 500);
 
   setTimeout(() => { cfReady = true; }, 1600);
 }
 
+// ── ANDROID BACK BUTTON (bfcache) ────────────────────────────
 window.addEventListener('pageshow', e => {
   if (e.persisted) {
     triggered = false; isDragging = false; dragDeltaY = 0;
@@ -398,25 +359,29 @@ window.addEventListener('pageshow', e => {
     scene.style.animation = '';
     scene.classList.add('show');
     mascotWrap.style.transition = 'none';
-    mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(120%)`;
+    mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(120%)`;
     void mascotWrap.offsetWidth;
     setTimeout(() => {
       mascotWrap.style.transition = 'transform 2.2s cubic-bezier(0.20,0.85,0.36,1)';
-      mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(0px)`;
+      mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(0px)`;
       setTimeout(() => {
         mascotWrap.style.transition = '';
         mascotReady = true;
         cta.style.transition = 'opacity 0.7s ease';
-        cta.style.opacity = '0.65';
+        cta.style.opacity    = '0.65';
       }, 2300);
     }, 300);
     setTimeout(() => { cfReady = true; }, 1400);
   }
 });
 
+// ── DRAG / SWIPE ─────────────────────────────────────────────
 const MAX_DRAG = 320, TRIGGER = 130;
 
-function onStart(y) { if (!mascotReady || triggered) return; isDragging=true; dragStartY=y; dragDeltaY=0; }
+function onStart(y) {
+  if (!mascotReady || triggered) return;
+  isDragging = true; dragStartY = y; dragDeltaY = 0;
+}
 function onMove(y) {
   if (!isDragging || triggered) return;
   dragDeltaY = Math.max(0, Math.min(dragStartY - y, MAX_DRAG));
@@ -424,11 +389,10 @@ function onMove(y) {
   mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${fy - dragDeltaY}px)`;
   const p1 = Math.min(dragDeltaY / (TRIGGER * 0.7), 1);
   cta.style.transform = `translateX(-50%) translateY(${-dragDeltaY * 0.8}px)`;
-  cta.style.opacity = String(0.65 * (1 - p1));
+  cta.style.opacity   = String(0.65 * (1 - p1));
   const p2 = Math.min(dragDeltaY / (TRIGGER * 0.85), 1);
-  classText.style.opacity = String(1 - p2);
+  classText.style.opacity   = String(1 - p2);
   classText.style.transform = `translateX(-50%) scale(${1 - p2 * 0.08})`;
-  mascotWrap.style.opacity = '1';
   if (dragDeltaY >= TRIGGER) goToForm();
 }
 function onEnd() {
@@ -436,23 +400,22 @@ function onEnd() {
   isDragging = false;
   if (triggered || dragDeltaY >= TRIGGER) { goToForm(); return; }
   cta.style.transition = 'transform .45s cubic-bezier(.34,1.3,.64,1), opacity .45s ease';
-  cta.style.transform = 'translateX(-50%) translateY(0)';
-  cta.style.opacity = '0.65';
-  mascotWrap.style.opacity = '1';
+  cta.style.transform  = 'translateX(-50%) translateY(0)';
+  cta.style.opacity    = '0.65';
   const sf = dragDeltaY, sd = 450, st = performance.now();
   (function snap(now) {
-    const t = Math.min((now - st) / sd, 1);
-    const e = 1 - Math.pow(1-t, 3);
+    const t  = Math.min((now - st) / sd, 1);
+    const e  = 1 - Math.pow(1 - t, 3);
     const fy = Math.sin(floatPhase) * FLOAT_AMP;
-    mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${fy - sf*(1-e)}px)`;
+    mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${fy - sf * (1 - e)}px)`;
     if (t < 1) requestAnimationFrame(snap);
   })(performance.now());
   const fo = parseFloat(classText.style.opacity) || 0, fd = 400, ft = performance.now();
   (function fadeBack(now) {
-    const t = Math.min((now - ft) / fd, 1);
-    const op = fo + (1-fo) * (1 - Math.pow(1-t, 2));
-    classText.style.opacity = String(op);
-    classText.style.transform = `translateX(-50%) scale(${1 - (1-op)*0.08})`;
+    const t  = Math.min((now - ft) / fd, 1);
+    const op = fo + (1 - fo) * (1 - Math.pow(1 - t, 2));
+    classText.style.opacity   = String(op);
+    classText.style.transform = `translateX(-50%) scale(${1 - (1 - op) * 0.08})`;
     if (t < 1) requestAnimationFrame(fadeBack);
   })(performance.now());
   dragDeltaY = 0;
@@ -467,34 +430,34 @@ document.addEventListener('mousemove',   e => { if (isDragging) onMove(e.clientY
 document.addEventListener('mouseup',     () => onEnd());
 cta.addEventListener('click', () => { if (!triggered && dragDeltaY < 10) goToForm(); });
 
+// ── NAVIGASI KE FORM ─────────────────────────────────────────
 function goToForm() {
   if (triggered) return;
   triggered = true; isDragging = false;
   const fy = Math.sin(floatPhase) * FLOAT_AMP;
   mascotWrap.style.transition = 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
   mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(${fy - 500}px)`;
-  mascotWrap.style.opacity = '1';
   cta.style.transition = 'transform .4s ease, opacity .35s ease';
   cta.style.transform  = 'translateX(-50%) translateY(-120px)';
-  cta.style.opacity = '0';
+  cta.style.opacity    = '0';
   classText.style.transition = 'opacity .4s ease';
-  classText.style.opacity = '0';
-  if (audioEl) {
-    sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
-    sessionStorage.setItem('mb_music_playing', '1'); // sinyal ke index.html agar musik lanjut
-  }
+  classText.style.opacity    = '0';
+
+  // Tandai: user sudah gesture di intro → index.html boleh autoplay musik
+  sessionStorage.setItem('mb_music_playing', '1');
+
   setTimeout(() => {
     scene.classList.add('exit');
     setTimeout(() => { window.location.href = 'index.html'; }, 460);
   }, 420);
 }
 
+// ── BLOKIR CONTEXT MENU & DRAG ───────────────────────────────
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('selectstart',  e => e.preventDefault());
 document.addEventListener('dragstart',    e => e.preventDefault());
 
-// Kick off: audio mulai di background, gambar di-preload
-startMusic();
+// ── KICK OFF ─────────────────────────────────────────────────
 preloadAll(reveal);
 </script>
 </body>
