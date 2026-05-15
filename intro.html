@@ -2,89 +2,56 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<!-- viewport-fit=cover: konten memenuhi seluruh layar termasuk area status bar & nav bar -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Markaz Belajar — Class of 2026</title>
-
-<!-- Status bar Android Chrome ikut warna langit -->
 <meta name="theme-color" content="#6ec6f5">
-<!-- iOS Safari status bar transparan (konten extends ke bawah status bar) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- PWA fullscreen mode -->
 <meta name="mobile-web-app-capable" content="yes">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{
-  /* Background meluas ke seluruh layar termasuk area status bar & nav bar */
-  background:#5ab8ec;
-  /* Tinggi 100% termasuk area safe (notch, status bar, nav bar) */
-  height:100%;
-}
+html{background:#5ab8ec;height:100%;}
 body{
   width:100%;height:100%;overflow:hidden;
   touch-action:none;background:#5ab8ec;
-  /* Blokir seleksi teks di seluruh halaman */
   -webkit-user-select:none;-moz-user-select:none;user-select:none;
-  /* Blokir callout (long-press bubble) di iOS/Android */
   -webkit-touch-callout:none;
-  /* Konten mengisi area penuh termasuk di bawah status bar & nav bar */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
 }
-/* Blokir drag & context menu pada semua gambar */
 img{
   -webkit-user-select:none;user-select:none;
   -webkit-touch-callout:none;
-  pointer-events:none;      /* gambar tidak bisa di-tap/long-press langsung */
+  pointer-events:none;
   -webkit-user-drag:none;
   user-drag:none;
   draggable:false;
 }
-
-/* ══════════════════════════════════════════════
-   LOADING SCREEN
-   Tampil instan, hanya warna + logo + dots
-   Tidak bergantung pada aset apapun selain logo
-══════════════════════════════════════════════ */
 #loading-screen{
   position:fixed;inset:0;z-index:999;
   background:linear-gradient(175deg,#7dd6f8 0%,#4aaee0 100%);
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:32px;
-  /* Awalnya penuh, transisi keluar saat hide */
   opacity:1;
   transition:opacity 0.85s cubic-bezier(0.4,0,0.2,1);
   pointer-events:all;
 }
-#loading-screen.hide{
-  opacity:0;
-  pointer-events:none;
-}
-
-/* Logo levitasi di loading screen */
+#loading-screen.hide{opacity:0;pointer-events:none;}
 #loading-logo{
   width:140px;
-  /* Gambar logo sudah ada di cache browser setelah load pertama,
-     tapi kalau belum → kita tampilkan placeholder SVG inline dulu */
   filter:drop-shadow(0 8px 32px rgba(0,0,80,0.18));
   animation:lvt 2.2s ease-in-out infinite;
-  /* Sembunyikan sampai benar-benar loaded */
   opacity:0;
   transition:opacity 0.4s ease;
 }
 #loading-logo.loaded{opacity:1;}
 @keyframes lvt{
   0%,100%{transform:translateY(0px);}
-  50%    {transform:translateY(-22px);}
+  50%{transform:translateY(-22px);}
 }
-
-/* Dots progress */
-#loading-dots{
-  display:flex;gap:10px;
-}
+#loading-dots{display:flex;gap:10px;}
 .dot{
   width:9px;height:9px;border-radius:50%;
   background:rgba(255,255,255,0.5);
@@ -95,10 +62,8 @@ img{
 .dot:nth-child(3){animation-delay:0.4s;}
 @keyframes dotPulse{
   0%,60%,100%{transform:scale(1);background:rgba(255,255,255,0.4);}
-  30%        {transform:scale(1.5);background:rgba(255,255,255,0.95);}
+  30%{transform:scale(1.5);background:rgba(255,255,255,0.95);}
 }
-
-/* Teks loading kecil */
 #loading-label{
   font-family:'Nunito',system-ui,sans-serif;
   font-size:11px;font-weight:700;
@@ -106,67 +71,31 @@ img{
   color:rgba(255,255,255,0.7);
   margin-top:-18px;
 }
-
-
-/* ══════════════════════════════════════════════
-   SCENE — tersembunyi sampai semua aset ready
-══════════════════════════════════════════════ */
 #scene{
   position:fixed;inset:0;overflow:hidden;
   opacity:0;
-  /* Tidak ada transition awal, diaktifkan JS saat reveal */
 }
-#scene.show{
-  opacity:1;
-  transition:opacity 1.0s ease;
-}
-#scene.exit{
-  animation:sceneExit 0.45s cubic-bezier(0.4,0,0.6,1) forwards;
-}
+#scene.show{opacity:1;transition:opacity 1.0s ease;}
+#scene.exit{animation:sceneExit 0.45s cubic-bezier(0.4,0,0.6,1) forwards;}
 @keyframes sceneExit{to{opacity:0;transform:scale(1.06);}}
-
-
-/* ══════════════════════════════════════════════
-   BG CANVAS
-══════════════════════════════════════════════ */
-#bg-canvas{
-  position:absolute;top:0;left:0;
-  width:100%;height:100%;z-index:1;
-}
-
-
-/* ══════════════════════════════════════════════
-   LOGO (scene)
-══════════════════════════════════════════════ */
+#bg-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
 #logo{
   position:absolute;top:48px;left:50%;
   width:136px;z-index:10;
   opacity:0;
   filter:drop-shadow(0 4px 16px rgba(0,0,0,.2));
-  /* Animasi dimulai setelah scene.show aktif */
   animation:logoIn .7s cubic-bezier(.34,1.4,.64,1) .2s both;
 }
 @keyframes logoIn{
   from{opacity:0;transform:translateX(-50%) translateY(-24px) scale(.75);}
-  to  {opacity:1;transform:translateX(-50%) translateY(0)    scale(1);}
+  to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
 }
-
-
-/* ══════════════════════════════════════════════
-   CLASS TEXT
-══════════════════════════════════════════════ */
 #class-text{
   position:absolute;top:110px;left:50%;
   width:86%;max-width:360px;z-index:9;
-  /* opacity awal 0, animasi dikontrol JS setelah reveal */
   opacity:0;
   filter:drop-shadow(0 6px 20px rgba(0,0,0,.22));
 }
-
-
-/* ══════════════════════════════════════════════
-   MASKOT
-══════════════════════════════════════════════ */
 #mascot-wrap{
   position:absolute;
   bottom:-2%;left:50%;
@@ -178,17 +107,12 @@ img{
 }
 #mascot-wrap img{width:100%;display:block;
   filter:drop-shadow(0 14px 30px rgba(0,0,0,.15));}
-
-
-/* ══════════════════════════════════════════════
-   SWIPE CTA
-══════════════════════════════════════════════ */
 #swipe-cta{
   position:absolute;bottom:38px;left:50%;
   transform:translateX(-50%) translateY(0);
   z-index:20;
   display:flex;flex-direction:column;align-items:center;gap:4px;
-  opacity:0;          /* JS yang tampilkan */
+  opacity:0;
   cursor:pointer;
   user-select:none;
   -webkit-tap-highlight-color:transparent;
@@ -208,18 +132,13 @@ img{
   text-shadow:0 0 10px rgba(255,255,255,.6),0 1px 4px rgba(0,0,0,.18);
   margin-top:2px;
 }
-
-
-/* ══════════════════════════════════════════════
-   SPARKLES
-══════════════════════════════════════════════ */
 .sp{
   position:absolute;pointer-events:none;z-index:15;
   opacity:0;animation:spk 2.8s ease-in-out infinite;
 }
 @keyframes spk{
   0%,100%{opacity:0;transform:scale(.4) rotate(0);}
-  50%    {opacity:.8;transform:scale(1) rotate(180deg);}
+  50%{opacity:.8;transform:scale(1) rotate(180deg);}
 }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -227,11 +146,6 @@ img{
 </head>
 <body>
 
-<!-- ════════════════════════════════════════════
-     LOADING SCREEN
-     Semua src langsung (tidak pakai data-src)
-     supaya loading screen sendiri muncul cepat
-════════════════════════════════════════════ -->
 <div id="loading-screen">
   <img id="loading-logo"
     src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png"
@@ -245,34 +159,19 @@ img{
   <div id="loading-label">Memuat…</div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     SCENE
-     Semua <img> pakai data-src bukan src,
-     sehingga browser TIDAK mulai download
-     sampai JS secara eksplisit swap src-nya
-     setelah semua preload selesai.
-════════════════════════════════════════════ -->
 <div id="scene">
   <canvas id="bg-canvas"></canvas>
-
-  <!-- Sparkles (SVG inline, tidak perlu load) -->
   <div class="sp" style="top:17%;left:7%;animation-delay:.4s"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12z" fill="#fff"/></svg></div>
   <div class="sp" style="top:11%;right:13%;animation-delay:1.3s"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12z" fill="#fff"/></svg></div>
   <div class="sp" style="top:32%;left:14%;animation-delay:2s"><svg width="9" height="9" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12z" fill="#fff" opacity=".7"/></svg></div>
   <div class="sp" style="top:22%;right:25%;animation-delay:.9s"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12z" fill="rgba(255,240,140,.95)"/></svg></div>
 
-  <!-- Semua img pakai data-src supaya tidak load duluan -->
-  <img id="logo"
-    data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png"
+  <img id="logo" data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png"
     alt="Markaz Belajar" draggable="false" oncontextmenu="return false">
-
-  <img id="class-text"
-    data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png"
+  <img id="class-text" data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png"
     alt="Class of 2026" draggable="false" oncontextmenu="return false">
-
   <div id="mascot-wrap">
-    <img id="mascot-img"
-      data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png"
+    <img id="mascot-img" data-src="https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_3.png"
       alt="Maskot" draggable="false" oncontextmenu="return false">
   </div>
 
@@ -289,16 +188,12 @@ img{
 <script>
 'use strict';
 
-// ════════════════════════════════════════════════════════════
-// CONFIG — tambahkan URL aset di sini sebanyak apapun
-// ════════════════════════════════════════════════════════════
 const BG_URLS = [
   'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.1.png',
   'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.2.png',
   'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.3.png',
   'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/beg_1.4.png',
 ];
-// Aset lain (scene) — tambah URL baru di sini
 const SCENE_URLS = [
   'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/MARKAZ_BELAJAR_LOGO.png',
   'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/bag_2.png',
@@ -306,9 +201,10 @@ const SCENE_URLS = [
 ];
 const ALL_URLS = [...BG_URLS, ...SCENE_URLS];
 
-// ════════════════════════════════════════════════════════════
-// ELEMEN (deklarasi sebelum semua logic)
-// ════════════════════════════════════════════════════════════
+// PERBAIKAN: audio URL terpisah, TIDAK masuk preloader
+const MUSIC_URL = 'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/intro.music.mp3';
+const MUSIC_KEY_TIME = 'mb_music_time';
+
 const loadingScreen = document.getElementById('loading-screen');
 const scene         = document.getElementById('scene');
 const bgCanvas      = document.getElementById('bg-canvas');
@@ -319,67 +215,42 @@ const classText     = document.getElementById('class-text');
 const logoEl        = document.getElementById('logo');
 const cta           = document.getElementById('swipe-cta');
 
-// ════════════════════════════════════════════════════════════
-// PRELOADER — gambar + audio sekaligus
-// Baru setelah 100% selesai → reveal() dipanggil.
-// ════════════════════════════════════════════════════════════
 const imageCache = {};
-let   audioBlobUrl = null; // blob URL audio yang sudah di-buffer
 
+// ── PERBAIKAN UTAMA: preloadAll hanya tunggu GAMBAR, bukan audio ──
 function preloadAll(onDone) {
-  let remaining = ALL_URLS.length + 1; // +1 untuk audio
+  let remaining = ALL_URLS.length;
+  if (remaining === 0) { onDone(); return; }
   function tick() { if (--remaining === 0) onDone(); }
-
-  // Preload semua gambar
   ALL_URLS.forEach(url => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.onload = img.onerror = () => { imageCache[url] = img; tick(); };
+    img.onload  = () => { imageCache[url] = img; tick(); };
+    img.onerror = () => { imageCache[url] = img; tick(); }; // tetap lanjut walau error
     img.src = url;
   });
-
-  // Preload audio via fetch → blob supaya tidak ada delay/skip saat play
-  fetch(MUSIC_URL)
-    .then(r => r.blob())
-    .then(blob => { audioBlobUrl = URL.createObjectURL(blob); tick(); })
-    .catch(() => { audioBlobUrl = MUSIC_URL; tick(); }); // fallback: langsung URL
 }
 
-
-// ════════════════════════════════════════════════════════════
-// BG — Seamless offscreen strip
-// Semua frame di-stitch jadi satu strip, scroll dengan modulo
-// ════════════════════════════════════════════════════════════
+// ── Audio load TERPISAH, tidak blocking ──
 const BG_SPEED = 0.55;
-let bgStrip  = null;
-let stripW   = 0;
-let bgOffset = 0;
+let bgStrip = null, stripW = 0, bgOffset = 0;
 
 function buildStrip() {
   const H    = bgCanvas.height;
   const imgs = BG_URLS.map(u => imageCache[u]).filter(img => img && img.naturalWidth);
   if (!imgs.length) return;
-
   const widths = imgs.map(img => Math.round((img.naturalWidth / img.naturalHeight) * H));
-  stripW = widths.reduce((a, b) => a + b, 0);
-
-  // Offscreen canvas: gambar semua frame berjejer tanpa gap
-  const oc  = document.createElement('canvas');
-  oc.width  = stripW;
-  oc.height = H;
-  const c2  = oc.getContext('2d');
-
+  stripW = widths.reduce((a,b) => a+b, 0);
+  const oc = document.createElement('canvas');
+  oc.width = stripW; oc.height = H;
+  const c2 = oc.getContext('2d');
   let x = 0;
-  imgs.forEach((img, i) => {
-    c2.drawImage(img, x, 0, widths[i], H);
-    x += widths[i];
-  });
-  bgStrip = oc;
-  bgOffset = 0;  // reset offset saat strip dibangun ulang
+  imgs.forEach((img,i) => { c2.drawImage(img,x,0,widths[i],H); x+=widths[i]; });
+  bgStrip = oc; bgOffset = 0;
 }
 
 function resizeBg() {
-  bgCanvas.width  = window.innerWidth;
+  bgCanvas.width = window.innerWidth;
   bgCanvas.height = window.innerHeight;
   buildStrip();
 }
@@ -387,45 +258,24 @@ window.addEventListener('resize', resizeBg);
 
 function drawBg() {
   const W = bgCanvas.width, H = bgCanvas.height;
-  if (!bgStrip || stripW === 0) {
-    bgCtx.fillStyle = '#5ab8ec';
-    bgCtx.fillRect(0, 0, W, H);
-    return;
-  }
+  if (!bgStrip || stripW === 0) { bgCtx.fillStyle='#5ab8ec'; bgCtx.fillRect(0,0,W,H); return; }
   bgOffset = ((bgOffset % stripW) + stripW) % stripW;
-  // Gambar dua kali agar seamless
-  bgCtx.drawImage(bgStrip, -bgOffset,         0, stripW, H);
-  bgCtx.drawImage(bgStrip, -bgOffset + stripW, 0, stripW, H);
+  bgCtx.drawImage(bgStrip, -bgOffset,          0, stripW, H);
+  bgCtx.drawImage(bgStrip, -bgOffset + stripW,  0, stripW, H);
   bgOffset += BG_SPEED;
 }
 
-
-// ════════════════════════════════════════════════════════════
-// ANIMASI STATE
-// ════════════════════════════════════════════════════════════
 const MASCOT_BASE_X = '-35%';
-const FLOAT_AMP     = 14;
-const FLOAT_SPEED   = 0.018;
+const FLOAT_AMP = 14, FLOAT_SPEED = 0.018;
+let floatPhase = 0, cfPhase = Math.PI;
+let mascotReady = false, cfReady = false;
+let isDragging = false, dragStartY = 0, dragDeltaY = 0;
+let triggered = false;
 
-let floatPhase  = 0;
-let cfPhase     = Math.PI;
-let mascotReady = false;
-let cfReady     = false;
-let isDragging  = false;
-let dragStartY  = 0;
-let dragDeltaY  = 0;
-let triggered   = false;
-let mainRafId   = null;
-
-
-// ════════════════════════════════════════════════════════════
-// MAIN LOOP
-// ════════════════════════════════════════════════════════════
 function mainLoop() {
   drawBg();
   floatPhase += FLOAT_SPEED;
   cfPhase    += FLOAT_SPEED * 0.85;
-
   if (!isDragging && !triggered && mascotReady) {
     const fy = Math.sin(floatPhase) * FLOAT_AMP;
     mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${fy}px)`;
@@ -434,150 +284,75 @@ function mainLoop() {
     const cy = Math.sin(cfPhase) * 10;
     classText.style.transform = `translateX(-50%) translateY(${cy}px)`;
   }
-  mainRafId = requestAnimationFrame(mainLoop);
+  requestAnimationFrame(mainLoop);
 }
 
-
-// ════════════════════════════════════════════════════════════
-// ANIMASI CLASS TEXT — JS driven (bukan CSS animation)
-// Supaya JS bisa override opacity saat swipe tanpa konflik
-// ════════════════════════════════════════════════════════════
 function animateClassText() {
-  const dur = 900; // ms
-  const t0  = performance.now();
-  // reset posisi awal
+  const dur = 900, t0 = performance.now();
   classText.style.transition = 'none';
-  classText.style.opacity    = '0';
-  classText.style.transform  = 'translateX(-50%) scale(0.5) rotate(-5deg)';
-
+  classText.style.opacity = '0';
+  classText.style.transform = 'translateX(-50%) scale(0.5) rotate(-5deg)';
   (function step(now) {
-    if (triggered) return; // jangan ganggu kalau sudah swipe
-    const t  = Math.min((now - t0) / dur, 1);
-    // easing bounce
+    if (triggered) return;
+    const t = Math.min((now - t0) / dur, 1);
     let scale, rot, op;
     if (t < 0.65) {
       const p = t / 0.65;
-      scale = 0.5  + p * 0.6;        // 0.5 → 1.1
-      rot   = -5   + p * 6;           // -5deg → +1deg
-      op    = p;
+      scale = 0.5 + p*0.6; rot = -5 + p*6; op = p;
     } else {
       const p = (t - 0.65) / 0.35;
-      scale = 1.1  - p * 0.1;         // 1.1 → 1.0
-      rot   =  1   - p * 1;           // +1deg → 0
-      op    = 1;
+      scale = 1.1 - p*0.1; rot = 1 - p*1; op = 1;
     }
-    classText.style.opacity   = String(op);
+    classText.style.opacity = String(op);
     classText.style.transform = `translateX(-50%) scale(${scale}) rotate(${rot}deg)`;
     if (t < 1) requestAnimationFrame(step);
   })(performance.now());
 }
 
-
-// ════════════════════════════════════════════════════════════
-// MUSIK LINTAS HALAMAN
-//
-// Cara kerja:
-// - intro.html mulai memutar musik, simpan currentTime ke sessionStorage
-//   setiap detik (dan saat goToForm)
-// - index.html membaca sessionStorage, lanjutkan dari posisi tersebut
-// - Pakai <audio> biasa dengan autoplay setelah user touch pertama
-//   (browser modern blokir autoplay tanpa interaksi user)
-// ════════════════════════════════════════════════════════════
-const MUSIC_URL      = 'https://raw.githubusercontent.com/markaz-belajar/Form-acc/main/intro.music.mp3';
-const MUSIC_KEY_TIME = 'mb_music_time';
-const MUSIC_KEY_PLAY = 'mb_music_playing';
-
-let audioEl = null;
-let musicStarted = false;
-
+// Audio: load lazy, tidak blocking scene
+let audioEl = null, musicStarted = false;
 function startMusic() {
   if (!MUSIC_URL) return;
-
-  const src = audioBlobUrl || MUSIC_URL;
-  audioEl = new Audio(src);
-  audioEl.loop   = true;
+  audioEl = new Audio();
+  audioEl.loop = true;
   audioEl.volume = 0;
-
-  // Lanjutkan dari posisi tersimpan (kalau balik dari index)
+  audioEl.preload = 'none'; // jangan autoload, kita minta manual
   const savedTime = parseFloat(sessionStorage.getItem(MUSIC_KEY_TIME) || '0');
-  if (savedTime > 0) audioEl.currentTime = savedTime;
-
-  // Simpan posisi tiap update
   audioEl.addEventListener('timeupdate', () => {
     sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
-    sessionStorage.setItem(MUSIC_KEY_PLAY, '1');
   });
-
   function tryPlay() {
     if (musicStarted) return;
+    audioEl.src = MUSIC_URL; // baru set src setelah ada interaksi
+    if (savedTime > 0) audioEl.currentTime = savedTime;
     audioEl.play().then(() => {
       musicStarted = true;
-      // Fade in volume
       let vol = 0;
-      const fadeIn = setInterval(() => {
+      const fi = setInterval(() => {
         vol = Math.min(vol + 0.04, 0.8);
         audioEl.volume = vol;
-        if (vol >= 0.8) clearInterval(fadeIn);
+        if (vol >= 0.8) clearInterval(fi);
       }, 80);
     }).catch(() => {});
   }
-
-  // ── Kunci utama: dengarkan touch PERTAMA di mana saja ──────
-  // Loading screen sudah tampil → user pasti menyentuh layar
-  // (menunggu, mengetuk, dll) → itu sudah cukup sebagai interaksi
-  document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
-  document.addEventListener('mousedown',  tryPlay, { once: true });
-  // Coba juga langsung (berhasil di beberapa browser/kondisi)
-  tryPlay();
+  document.addEventListener('touchstart', tryPlay, {once:true, passive:true});
+  document.addEventListener('mousedown',  tryPlay, {once:true});
 }
 
-function pauseMusicForNav() {
-  if (!audioEl) return;
-  // Simpan waktu terakhir sebelum pindah halaman
-  sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
-  sessionStorage.setItem(MUSIC_KEY_PLAY, '1');
-  // JANGAN pause — biarkan audio terus, halaman baru yang ambil alih
-  // (browser akan stop otomatis saat navigasi, tapi waktu sudah tersimpan)
-}
-
-
-
-function setThemeColor(color) {
-  let meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', color);
-}
-
-
-// ════════════════════════════════════════════════════════════
-// REVEAL — dipanggil tepat setelah semua aset selesai load
-// ════════════════════════════════════════════════════════════
 function reveal() {
-  // 1. Pasang src dari cache ke elemen HTML
-  logoEl.src    = imageCache[SCENE_URLS[0]].src;
-  classText.src = imageCache[SCENE_URLS[1]].src;
-  mascotImg.src = imageCache[SCENE_URLS[2]].src;
+  logoEl.src    = imageCache[SCENE_URLS[0]]?.src || SCENE_URLS[0];
+  classText.src = imageCache[SCENE_URLS[1]]?.src || SCENE_URLS[1];
+  mascotImg.src = imageCache[SCENE_URLS[2]]?.src || SCENE_URLS[2];
 
-  // 2. Bangun BG strip
   resizeBg();
-  setThemeColor('#6ec6f5');
-
-  // 3. Mulai loop animasi
   requestAnimationFrame(mainLoop);
 
-  // 4. Sembunyikan loading screen
   loadingScreen.classList.add('hide');
   setTimeout(() => { loadingScreen.style.display = 'none'; }, 950);
-
-  // 5. Tampilkan scene
   scene.classList.add('show');
 
-  // 6. Animasi class text (JS-driven agar bisa di-override saat swipe)
-  //    Delay 0.6s, bounce dari kecil ke normal
-  setTimeout(() => {
-    animateClassText();
-  }, 600);
+  setTimeout(() => { animateClassText(); }, 600);
 
-  // 7. Rise maskot
   setTimeout(() => {
     mascotWrap.style.transition = 'transform 2.2s cubic-bezier(0.20,0.85,0.36,1)';
     mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(0px)`;
@@ -585,198 +360,116 @@ function reveal() {
       mascotWrap.style.transition = '';
       mascotReady = true;
       cta.style.transition = 'opacity 0.7s ease';
-      cta.style.opacity    = '0.65';
+      cta.style.opacity = '0.65';
     }, 2300);
   }, 500);
 
   setTimeout(() => { cfReady = true; }, 1600);
 }
 
-
-// ════════════════════════════════════════════════════════════
-// FULL RESET — saat kembali dari halaman lain (back button)
-// ════════════════════════════════════════════════════════════
-function fullReset() {
-  // Reset state
-  triggered   = false;
-  isDragging  = false;
-  dragDeltaY  = 0;
-  dragStartY  = 0;
-  mascotReady = false;
-  cfReady     = false;
-  floatPhase  = 0;
-  cfPhase     = Math.PI;
-  bgOffset    = 0;
-
-  // Reset CSS elemen
-  scene.classList.remove('exit');
-  scene.style.animation = '';
-  scene.classList.add('show');
-
-  mascotWrap.style.transition = 'none';
-  mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(120%)`;
-  mascotWrap.style.opacity    = '1';
-
-  classText.style.transition = 'none';
-  classText.style.opacity    = '1';
-  classText.style.transform  = 'translateX(-50%)';
-
-  cta.style.transition = 'none';
-  cta.style.opacity    = '0';
-  cta.style.transform  = 'translateX(-50%) translateY(0)';
-
-  // Force reflow agar transition reset benar-benar diterapkan
-  void mascotWrap.offsetWidth;
-
-  // Rise ulang
-  setTimeout(() => {
-    mascotWrap.style.transition = 'transform 2.2s cubic-bezier(0.20,0.85,0.36,1)';
-    mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(0px)`;
-
-    setTimeout(() => {
-      mascotWrap.style.transition = '';
-      mascotReady = true;
-      cta.style.transition = 'opacity 0.7s ease';
-      cta.style.opacity    = '0.65';
-    }, 2300);
-  }, 300);
-
-  setTimeout(() => { cfReady = true; }, 1400);
-}
-
 window.addEventListener('pageshow', e => {
-  if (e.persisted) fullReset();
+  if (e.persisted) {
+    triggered = false; isDragging = false; dragDeltaY = 0;
+    mascotReady = false; cfReady = false;
+    floatPhase = 0; cfPhase = Math.PI; bgOffset = 0;
+    scene.classList.remove('exit');
+    scene.style.animation = '';
+    scene.classList.add('show');
+    mascotWrap.style.transition = 'none';
+    mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(120%)`;
+    void mascotWrap.offsetWidth;
+    setTimeout(() => {
+      mascotWrap.style.transition = 'transform 2.2s cubic-bezier(0.20,0.85,0.36,1)';
+      mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(0px)`;
+      setTimeout(() => {
+        mascotWrap.style.transition = '';
+        mascotReady = true;
+        cta.style.transition = 'opacity 0.7s ease';
+        cta.style.opacity = '0.65';
+      }, 2300);
+    }, 300);
+    setTimeout(() => { cfReady = true; }, 1400);
+  }
 });
 
+const MAX_DRAG = 320, TRIGGER = 130;
 
-// ════════════════════════════════════════════════════════════
-// DRAG / SWIPE
-// ════════════════════════════════════════════════════════════
-const MAX_DRAG = 320;
-const TRIGGER  = 130;
-
-function onStart(y) {
-  if (!mascotReady || triggered) return;
-  isDragging = true;
-  dragStartY = y;
-  dragDeltaY = 0;
-}
-
+function onStart(y) { if (!mascotReady || triggered) return; isDragging=true; dragStartY=y; dragDeltaY=0; }
 function onMove(y) {
   if (!isDragging || triggered) return;
   dragDeltaY = Math.max(0, Math.min(dragStartY - y, MAX_DRAG));
-
   const fy = Math.sin(floatPhase) * FLOAT_AMP;
   mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${fy - dragDeltaY}px)`;
-
   const p1 = Math.min(dragDeltaY / (TRIGGER * 0.7), 1);
   cta.style.transform = `translateX(-50%) translateY(${-dragDeltaY * 0.8}px)`;
-  cta.style.opacity   = String(0.65 * (1 - p1));
-
-  // Class text fade out saat swipe
+  cta.style.opacity = String(0.65 * (1 - p1));
   const p2 = Math.min(dragDeltaY / (TRIGGER * 0.85), 1);
-  classText.style.opacity   = String(1 - p2);
+  classText.style.opacity = String(1 - p2);
   classText.style.transform = `translateX(-50%) scale(${1 - p2 * 0.08})`;
-
-  // Maskot TIDAK memudar — hanya naik, opacity tetap penuh
   mascotWrap.style.opacity = '1';
-
   if (dragDeltaY >= TRIGGER) goToForm();
 }
-
 function onEnd() {
   if (!isDragging) return;
   isDragging = false;
   if (triggered || dragDeltaY >= TRIGGER) { goToForm(); return; }
-
-  // Snap kembali ke posisi semula
   cta.style.transition = 'transform .45s cubic-bezier(.34,1.3,.64,1), opacity .45s ease';
-  cta.style.transform  = 'translateX(-50%) translateY(0)';
-  cta.style.opacity    = '0.65';
+  cta.style.transform = 'translateX(-50%) translateY(0)';
+  cta.style.opacity = '0.65';
   mascotWrap.style.opacity = '1';
-
   const sf = dragDeltaY, sd = 450, st = performance.now();
   (function snap(now) {
-    const t  = Math.min((now - st) / sd, 1);
-    const e  = 1 - Math.pow(1 - t, 3);
+    const t = Math.min((now - st) / sd, 1);
+    const e = 1 - Math.pow(1-t, 3);
     const fy = Math.sin(floatPhase) * FLOAT_AMP;
     mascotWrap.style.transform = `translateX(${MASCOT_BASE_X}) translateY(${fy - sf*(1-e)}px)`;
     if (t < 1) requestAnimationFrame(snap);
   })(performance.now());
-
-  const fo = parseFloat(classText.style.opacity) || 0;
-  const fd = 400, ft = performance.now();
+  const fo = parseFloat(classText.style.opacity) || 0, fd = 400, ft = performance.now();
   (function fadeBack(now) {
-    const t  = Math.min((now - ft) / fd, 1);
-    const op = fo + (1 - fo) * (1 - Math.pow(1 - t, 2));
-    classText.style.opacity   = String(op);
-    classText.style.transform = `translateX(-50%) scale(${1 - (1 - op) * 0.08})`;
+    const t = Math.min((now - ft) / fd, 1);
+    const op = fo + (1-fo) * (1 - Math.pow(1-t, 2));
+    classText.style.opacity = String(op);
+    classText.style.transform = `translateX(-50%) scale(${1 - (1-op)*0.08})`;
     if (t < 1) requestAnimationFrame(fadeBack);
   })(performance.now());
-
   dragDeltaY = 0;
 }
 
-document.addEventListener('touchstart',  e => onStart(e.touches[0].clientY),           {passive:true});
-document.addEventListener('touchmove',   e => onMove(e.touches[0].clientY),             {passive:true});
-document.addEventListener('touchend',    () => onEnd(),                                 {passive:true});
-document.addEventListener('touchcancel', () => onEnd(),                                 {passive:true});
+document.addEventListener('touchstart',  e => onStart(e.touches[0].clientY), {passive:true});
+document.addEventListener('touchmove',   e => onMove(e.touches[0].clientY),   {passive:true});
+document.addEventListener('touchend',    () => onEnd(), {passive:true});
+document.addEventListener('touchcancel', () => onEnd(), {passive:true});
 document.addEventListener('mousedown',   e => onStart(e.clientY));
 document.addEventListener('mousemove',   e => { if (isDragging) onMove(e.clientY); });
 document.addEventListener('mouseup',     () => onEnd());
 cta.addEventListener('click', () => { if (!triggered && dragDeltaY < 10) goToForm(); });
 
-
-// ════════════════════════════════════════════════════════════
-// GO TO FORM
-// ════════════════════════════════════════════════════════════
 function goToForm() {
   if (triggered) return;
-  triggered  = true;
-  isDragging = false;
-
+  triggered = true; isDragging = false;
   const fy = Math.sin(floatPhase) * FLOAT_AMP;
-
-  // Maskot terbang naik — TIDAK fade, opacity tetap 1
   mascotWrap.style.transition = 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
   mascotWrap.style.transform  = `translateX(${MASCOT_BASE_X}) translateY(${fy - 500}px)`;
-  mascotWrap.style.opacity    = '1';
-
-  // CTA naik & fade
+  mascotWrap.style.opacity = '1';
   cta.style.transition = 'transform .4s ease, opacity .35s ease';
   cta.style.transform  = 'translateX(-50%) translateY(-120px)';
-  cta.style.opacity    = '0';
-
-  // Class of 2026 — fade out
+  cta.style.opacity = '0';
   classText.style.transition = 'opacity .4s ease';
-  classText.style.opacity    = '0';
-
+  classText.style.opacity = '0';
+  if (audioEl) sessionStorage.setItem(MUSIC_KEY_TIME, String(audioEl.currentTime));
   setTimeout(() => {
-    pauseMusicForNav();
     scene.classList.add('exit');
     setTimeout(() => { window.location.href = 'index.html'; }, 460);
   }, 420);
 }
 
-
-// ════════════════════════════════════════════════════════════
-// BLOKIR LONG-PRESS / CONTEXT MENU / IMAGE SAVE
-// ════════════════════════════════════════════════════════════
-// Blokir klik kanan & long-press context menu di semua browser
 document.addEventListener('contextmenu', e => e.preventDefault());
-// Blokir seleksi teks lewat touch
-document.addEventListener('selectstart', e => e.preventDefault());
-// Blokir drag gambar
-document.addEventListener('dragstart',   e => e.preventDefault());
+document.addEventListener('selectstart',  e => e.preventDefault());
+document.addEventListener('dragstart',    e => e.preventDefault());
 
-
-// ════════════════════════════════════════════════════════════
-// KICK OFF
-// 1. Siapkan audio SEKARANG — dengarkan touch pertama di mana saja
-// 2. Preload semua aset di background
-// 3. Setelah selesai → reveal scene
-// ════════════════════════════════════════════════════════════
-startMusic();      // ← pasang listener touch sejak loading screen tampil
+// Kick off: audio mulai di background, gambar di-preload
+startMusic();
 preloadAll(reveal);
 </script>
 </body>
